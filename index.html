@@ -180,7 +180,25 @@ p { margin: 0 0 14px; }
 }
 .filters button:hover { border-color: var(--orange); }
 .filters button[aria-pressed="true"] { background: var(--orange); color: #140b02; border-color: var(--orange); box-shadow: 0 0 20px var(--glow-o); }
-.gallery { display: grid; gap: 22px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; align-items: center; margin: 0 0 22px; }
+.toolbar .filters { margin: 0; }
+.views { display: inline-flex; padding: 3px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.03); }
+.views button { border: 0; background: transparent; color: var(--muted); padding: 6px 14px; border-radius: 999px; font: inherit; font-size: 13px; cursor: pointer; }
+.views button[aria-pressed="true"] { background: var(--cyan); color: #031015; box-shadow: 0 0 16px var(--glow-c); }
+.gallery-wrap { max-width: 1640px; }
+.gallery { display: grid; gap: 26px; }
+.gallery[data-view="gen"], .gallery[data-view="real"] { grid-template-columns: repeat(auto-fit, minmax(min(100%, 640px), 1fr)); }
+.gallery[data-view="gen"] .clip-frame, .gallery[data-view="real"] .clip-frame { aspect-ratio: 16 / 9; }
+.gallery[data-view="gen"] .clip-frame video, .gallery[data-view="real"] .clip-frame video { width: 200%; max-width: none; }
+.gallery[data-view="gen"] .clip-frame video { transform: translateX(-50%); }
+.gallery[data-view="gen"] .clip-frame::after, .gallery[data-view="real"] .clip-frame::after,
+.gallery[data-view="gen"] .tag.left, .gallery[data-view="real"] .tag.right { display: none; }
+.gallery[data-view="gen"] .tag.right { left: 10px; }
+.fs { position: absolute; right: 10px; bottom: 10px; z-index: 2; width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line-strong);
+  background: rgba(0,0,0,.55); color: #fff; display: grid; place-items: center; cursor: pointer; opacity: 0; transition: opacity .2s; }
+.fs svg { width: 18px; height: 18px; }
+.clip:hover .fs, .fs:focus-visible { opacity: 1; }
+@media (hover: none) { .fs { opacity: 1; } }
 .clip { margin: 0; }
 .clip-frame {
   position: relative; border-radius: var(--radius); overflow: hidden; background: #000; aspect-ratio: 32 / 9;
@@ -344,12 +362,19 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
     </div>
   </section>
 
-  <section id="results" class="wrap">
+  <section id="results" class="wrap gallery-wrap">
     <p class="kicker reveal">Results</p>
     <h2 class="reveal">Seven maps</h2>
-    <p class="lead reveal">Left: the original recording. Right: our rendering of the same eight seconds. All clips come from held-out validation rounds.</p>
-    <div class="filters reveal" role="group" aria-label="Map filter" id="map-filter"></div>
-    <div class="gallery" id="gallery"></div>
+    <p class="lead reveal">Left: the original recording. Right: our rendering of the same eight seconds, at 1280&times;720. All clips come from held-out validation rounds. Switch to a single view or open a clip full screen to see it at full resolution.</p>
+    <div class="toolbar reveal">
+      <div class="filters" role="group" aria-label="Map filter" id="map-filter"></div>
+      <div class="views" role="group" aria-label="View mode" id="view-mode">
+        <button type="button" data-view="both" aria-pressed="true">Side by side</button>
+        <button type="button" data-view="gen" aria-pressed="false">Generated only</button>
+        <button type="button" data-view="real" aria-pressed="false">Real only</button>
+      </div>
+    </div>
+    <div class="gallery" id="gallery" data-view="both"></div>
   </section>
 
   <section id="multiview" class="wrap">
@@ -512,12 +537,23 @@ function clipCard(map, [name, weapon]) {
     <div class="clip-frame">
       <video muted loop playsinline preload="none" poster="static/images/${name}.jpg" data-src="static/videos/${name}.mp4"></video>
       <span class="tag left">Real</span><span class="tag right">Generated</span>
+      <button class="fs" type="button" aria-label="Full screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
     </div>
     <figcaption><b>${map}</b><span>${weapon}</span></figcaption>`;
-  player.observe(figure.querySelector("video"));
+  const video = figure.querySelector("video");
+  figure.querySelector(".fs").addEventListener("click", () => {
+    if (!video.getAttribute("src")) video.src = video.dataset.src;
+    (video.requestFullscreen || video.webkitEnterFullscreen || (() => {})).call(video);
+    video.play().catch(() => {});
+  });
+  player.observe(video);
   revealer.observe(figure);
   return figure;
 }
+document.querySelectorAll("#view-mode button").forEach(button => button.addEventListener("click", () => {
+  document.querySelectorAll("#view-mode button").forEach(b => b.setAttribute("aria-pressed", String(b === button)));
+  gallery.dataset.view = button.dataset.view;
+}));
 function show(map) {
   for (const button of filter.querySelectorAll("button")) button.setAttribute("aria-pressed", String(button.dataset.map === map));
   for (const figure of gallery.children) figure.hidden = map !== "All" && figure.dataset.map !== map;
