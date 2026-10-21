@@ -251,10 +251,6 @@ p { margin: 0 0 14px; }
 figure.wide { margin: 40px 0 0; }
 figure.wide img { width: 100%; display: block; border-radius: var(--radius); border: 1px solid var(--line); }
 figure.wide figcaption { color: var(--muted); font-size: 14px; margin-top: 10px; }
-.tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 16px; }
-.tabs button { border: 1px solid var(--line-strong); background: transparent; color: var(--muted); padding: 7px 16px; border-radius: 999px; font: inherit; font-size: 14px; cursor: pointer; }
-.tabs button[aria-selected="true"] { color: #031015; background: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 20px var(--glow-c); }
-.pipeline img { width: 100%; display: block; border-radius: var(--radius); border: 1px solid var(--line); }
 .trailer { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line-strong); box-shadow: 0 30px 80px rgba(0,0,0,.5); }
 .trailer video { width: 100%; display: block; background: #000; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
@@ -267,6 +263,184 @@ pre {
 }
 .copy { position: absolute; top: 10px; right: 10px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.05); color: var(--fg); border-radius: 8px; padding: 4px 10px; font-size: 12px; cursor: pointer; }
 footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align: center; border-top: 1px solid var(--line); margin-top: 80px; }
+
+/* ---------- dataset construction diagram ---------- */
+.ewm-bleed { width: min(1480px, calc(100vw - 32px)); margin-left: calc(50% - min(740px, 50vw - 16px)); }
+.ewm { --sc2: #3ad6ff; --dota: #ff5a46; --cs2: #ff9a3c; --ink: #dfe5ee; --soft: #8e98aa; --cell: rgba(255,255,255,.035); --edge: rgba(255,255,255,.09);
+  position: relative; padding: 28px; border-radius: 20px; border: 1px solid var(--line-strong);
+  background: radial-gradient(120% 80% at 50% 0%, rgba(58,214,255,.07), transparent 60%), linear-gradient(180deg, rgba(16,21,30,.92), rgba(9,12,18,.96));
+  box-shadow: 0 40px 100px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05); font-size: 13px; color: var(--ink); }
+.ewm::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: .5;
+  background-image: radial-gradient(rgba(255,255,255,.07) 1px, transparent 1px); background-size: 18px 18px;
+  mask-image: linear-gradient(180deg, #000, transparent 70%); }
+.ewm .ic { width: 15px; height: 15px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ewm-stages { position: relative; display: grid; grid-template-columns: 1.05fr 26px 1.1fr 26px 1.3fr 26px 0.9fr; align-items: stretch; }
+.ewm-stage { position: relative; display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 16px; background: rgba(255,255,255,.025);
+  border: 1px solid var(--edge); transition: border-color .3s, box-shadow .3s, transform .3s; }
+.ewm-stage:hover { border-color: rgba(58,214,255,.45); box-shadow: 0 0 40px rgba(58,214,255,.12); transform: translateY(-3px); }
+.ewm-head { display: flex; align-items: center; gap: 10px; font-weight: 750; font-size: 15px; letter-spacing: .01em; line-height: 1.25; }
+.ewm-num { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; flex: none; font-weight: 850; font-size: 14px; color: #041016;
+  background: linear-gradient(135deg, #7ce8ff, var(--cyan)); box-shadow: 0 0 18px rgba(58,214,255,.45); }
+.ewm-link { position: relative; align-self: center; height: 2px; margin: 0 3px; background: linear-gradient(90deg, rgba(58,214,255,.15), rgba(58,214,255,.7)); }
+.ewm-link::after { content: ""; position: absolute; right: -2px; top: -4px; border: 5px solid transparent; border-left: 7px solid #7ce8ff; border-right: 0; }
+.ewm-link i { position: absolute; top: -2px; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px #7ce8ff, 0 0 4px #fff; animation: ewm-flow 1.8s linear infinite; }
+@keyframes ewm-flow { from { left: 0; opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } to { left: calc(100% - 6px); opacity: 0; } }
+
+.ewm-box { border-radius: 10px; background: var(--cell); border: 1px solid var(--edge); padding: 10px 12px; }
+.ewm-box b { display: block; font-size: 13.5px; }
+.ewm-box small { color: var(--soft); font-size: 12px; }
+.ewm-row { display: flex; align-items: center; gap: 8px; }
+.ewm-label { display: flex; align-items: center; gap: 7px; font-weight: 650; color: var(--ink); }
+.ewm-label .ic { color: var(--cyan); }
+.ewm-muted { color: var(--soft); }
+
+/* stage 1 */
+.ewm-s1 { display: grid; grid-template-columns: auto 34px 1fr; align-items: center; flex: 1; }
+.ewm-replays { position: relative; width: 84px; padding: 14px 10px; border-radius: 10px; background: #141b26; border: 1px solid var(--edge); text-align: center;
+  box-shadow: 5px -5px 0 -1px #10161f, 5px -5px 0 0 var(--edge), 10px -10px 0 -1px #0d121a, 10px -10px 0 0 var(--edge); }
+.ewm-replays b { display: block; font-size: 15px; color: #7ce8ff; margin-bottom: 4px; }
+.ewm-replays small { color: var(--soft); font-size: 11.5px; line-height: 1.4; }
+.ewm-fork { width: 34px; height: 100%; min-height: 150px; }
+.ewm-fork path { stroke: rgba(58,214,255,.6); stroke-width: 1.5; fill: none; stroke-dasharray: 4 4; animation: ewm-dash 1.2s linear infinite; }
+@keyframes ewm-dash { to { stroke-dashoffset: -16; } }
+.ewm-s1 .stack { display: grid; gap: 12px; }
+.ewm-s1 .ewm-box { display: flex; align-items: center; gap: 10px; }
+.ewm-s1 .ewm-box .ic { width: 26px; height: 26px; color: #7ce8ff; stroke-width: 1.4; }
+.ewm-s1 .ewm-box b, .ewm-s1 .ewm-box small { white-space: nowrap; }
+
+/* film strips */
+.ewm-film { position: relative; display: flex; gap: 3px; padding: 7px 3px; border-radius: 4px; background: #040507; overflow: hidden; flex: 1; min-width: 0; }
+.ewm-film::before, .ewm-film::after { content: ""; position: absolute; left: 3px; right: 3px; height: 3px;
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.75) 0 4px, transparent 4px 9px); }
+.ewm-film::before { top: 2px; } .ewm-film::after { bottom: 2px; }
+.ewm-film img { flex: 1; min-width: 0; aspect-ratio: 16 / 9; object-fit: cover; display: block; border-radius: 1px; }
+.ewm-film .sheen { position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.12) 50%, transparent 70%); animation: ewm-sheen 4s ease-in-out infinite; }
+@keyframes ewm-sheen { from { transform: translateX(-100%); } 60%, to { transform: translateX(100%); } }
+
+/* tables */
+.ewm-table { display: grid; border: 1px solid var(--edge); border-radius: 6px; overflow: hidden; flex: 1; font-size: 11.5px; }
+.ewm-table > div { display: grid; grid-template-columns: repeat(var(--cols, 3), 1fr); }
+.ewm-table > div + div { border-top: 1px solid var(--edge); }
+.ewm-table span { padding: 4px 6px; display: flex; align-items: center; gap: 4px; color: var(--soft); min-width: 0; }
+.ewm-table span + span { border-left: 1px solid var(--edge); }
+.ewm-table .h span { color: var(--ink); background: rgba(255,255,255,.04); }
+.ewm-table .h .ic { width: 11px; height: 11px; color: var(--cyan); }
+.ewm-table .r span::before { content: ""; display: block; width: 60%; height: 2px; margin: 4px auto; border-radius: 2px; background: rgba(255,255,255,.14); }
+
+/* stage 2 */
+.ewm-s2 { display: grid; grid-template-columns: 86px 1fr; gap: 10px 10px; align-items: center; }
+.ewm-s2 .pl { display: grid; grid-template-columns: 22px 1fr; gap: 6px; align-items: center; }
+.ewm-s2 .pl em { font-style: normal; color: var(--soft); font-size: 12px; text-align: right; }
+.ewm-s2 .films { display: grid; gap: 6px; }
+
+/* stage 3: replay clock */
+.ewm-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-weight: 650; }
+.ewm-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.ewm-legend .ic { color: var(--cyan); }
+.ewm-clock { --lab: 74px; position: relative; display: grid; grid-template-columns: var(--lab) 1fr; gap: 8px 8px; align-items: center; padding: 10px; border-radius: 12px; background: rgba(0,0,0,.25); border: 1px solid var(--edge); }
+.ewm-clock .lbl { color: var(--soft); font-size: 12px; text-align: right; }
+.ewm-ruler { position: relative; height: 30px; }
+.ewm-ruler .ticks { position: absolute; left: 0; right: 0; bottom: 4px; height: 8px; border-bottom: 1px solid rgba(255,255,255,.4);
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.4) 0 1px, transparent 1px 8.33%); }
+.ewm-ruler b { position: absolute; top: 0; transform: translateX(-50%); font-size: 12px; font-weight: 600; color: var(--ink); }
+.ewm-track { position: relative; height: 22px; border-radius: 6px; border: 1px solid var(--edge); background: rgba(255,255,255,.02); }
+.ewm-dot { position: absolute; top: 50%; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: #7ce8ff;
+  animation: ewm-ping 6s linear infinite; animation-delay: calc(var(--p) * 6s - 6s); }
+.ewm-film .ewm-dot { width: 10px; height: 10px; margin: -5px 0 0 -5px; background: transparent; border: 2px solid #fff; z-index: 1; }
+@keyframes ewm-ping { 0%, 6% { box-shadow: 0 0 0 0 rgba(255,154,60,.9), 0 0 14px rgba(255,154,60,.9); transform: scale(1.5); } 14%, 100% { box-shadow: 0 0 0 7px rgba(255,154,60,0); transform: scale(1); } }
+.ewm-tracks { position: relative; grid-column: 2; display: grid; gap: 8px; }
+.ewm-vlines { position: absolute; top: 0; bottom: 0; left: calc(var(--lab) + 18px); right: 10px; pointer-events: none; }
+.ewm-vlines i { position: absolute; top: 34px; bottom: 6px; width: 0; border-left: 1px dashed rgba(124,232,255,.45); }
+.ewm-playhead { position: absolute; top: 28px; bottom: 4px; width: 2px; margin-left: -1px; background: linear-gradient(180deg, transparent, var(--orange) 15%, var(--orange) 85%, transparent);
+  box-shadow: 0 0 14px var(--orange); animation: ewm-sweep 6s linear infinite; }
+@keyframes ewm-sweep { from { left: 0; } to { left: 100%; } }
+
+/* stage 4 */
+.ewm-out { position: relative; flex: 1; display: grid; gap: 12px; padding: 14px; border-radius: 12px; background: #131a25; border: 1px solid var(--edge);
+  box-shadow: -6px -6px 0 -1px #10161f, -6px -6px 0 0 var(--edge), -12px -12px 0 -1px #0d121a, -12px -12px 0 0 var(--edge); margin: 12px 0 0 12px; }
+.ewm-out .item { display: grid; grid-template-columns: 1.15fr 1fr; gap: 12px; align-items: center; }
+.ewm-out .item > .ewm-label { justify-self: start; }
+.ewm-out img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px; border: 1px solid var(--edge); display: block; }
+.ewm-arrow { position: relative; height: 26px; border-radius: 6px; border: 1px solid var(--edge); }
+.ewm-arrow::before { content: ""; position: absolute; left: 12%; right: 14%; top: 50%; height: 2px; margin-top: -1px; background: linear-gradient(90deg, rgba(124,232,255,.3), #7ce8ff); }
+.ewm-arrow::after { content: ""; position: absolute; right: 9%; top: 50%; margin-top: -5px; border: 5px solid transparent; border-left: 8px solid #7ce8ff; border-right: 0; }
+
+/* hub between stages and games */
+.ewm-hub { position: relative; height: 112px; }
+.ewm-hub svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.ewm-hub path { fill: none; stroke: rgba(124,232,255,.5); stroke-width: 1.4; vector-effect: non-scaling-stroke; stroke-dasharray: 5 5; animation: ewm-dash 1.4s linear infinite; }
+.ewm-pill { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 9px 26px; border-radius: 999px; white-space: nowrap;
+  font-weight: 800; font-size: 15px; letter-spacing: .02em; color: #e9fbff; background: linear-gradient(90deg, rgba(58,214,255,.18), rgba(255,154,60,.18));
+  border: 1px solid rgba(124,232,255,.55); box-shadow: 0 0 30px rgba(58,214,255,.2), inset 0 0 20px rgba(58,214,255,.08); backdrop-filter: blur(6px); }
+
+/* game cards */
+.ewm-games { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.ewm-game { --acc: var(--cyan); position: relative; display: grid; gap: 12px; align-content: start; padding: 16px; border-radius: 16px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--acc) 7%, transparent), rgba(255,255,255,.02) 40%); border: 1px solid var(--edge); transition: border-color .3s, box-shadow .3s, transform .3s; }
+.ewm-game:hover { border-color: color-mix(in srgb, var(--acc) 60%, transparent); box-shadow: 0 0 44px color-mix(in srgb, var(--acc) 18%, transparent); transform: translateY(-3px); }
+.ewm-game.sc2 { --acc: var(--sc2); } .ewm-game.dota { --acc: var(--dota); } .ewm-game.cs2 { --acc: var(--cs2); }
+.ewm-game h4 { margin: 0; font-size: 19px; font-weight: 850; display: flex; align-items: center; gap: 10px; }
+.ewm-game h4::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 12px var(--acc); }
+.ewm-game .top { display: grid; grid-template-columns: 34% 1fr; gap: 10px; align-items: center; }
+.ewm-game .thumb { border-radius: 10px; overflow: hidden; border: 1px solid var(--edge); aspect-ratio: 4 / 3; }
+.ewm-game .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s; }
+.ewm-game:hover .thumb img { transform: scale(1.06); }
+.ewm-sub { border-radius: 10px; border: 1px solid var(--edge); background: var(--cell); overflow: hidden; }
+.ewm-sub > header { padding: 7px 11px; font-weight: 700; font-size: 12.5px; background: color-mix(in srgb, var(--acc) 10%, transparent); border-bottom: 1px solid var(--edge); }
+.ewm-sub > div { padding: 10px 11px; }
+.ewm-game .ic { color: var(--acc); }
+.ewm-loop { display: flex; align-items: center; gap: 8px; }
+.ewm-loop .k { display: grid; justify-items: center; gap: 2px; color: var(--soft); font-size: 11.5px; }
+.ewm-loop .k .ic { width: 18px; height: 18px; animation: ewm-spin 4s linear infinite; }
+@keyframes ewm-spin { to { transform: rotate(360deg); } }
+.ewm-loop .arr { color: var(--acc); font-size: 16px; }
+.ewm-two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ewm-tile { display: flex; gap: 9px; align-items: center; padding: 9px; border-radius: 9px; border: 1px solid var(--edge); background: rgba(0,0,0,.2); }
+.ewm-tile.on { border-color: color-mix(in srgb, var(--acc) 45%, transparent); background: color-mix(in srgb, var(--acc) 8%, transparent); }
+.ewm-tile .ic { width: 20px; height: 20px; }
+.ewm-tile b { display: block; font-size: 12.5px; } .ewm-tile small { color: var(--soft); font-size: 11.5px; }
+.ewm-doc { display: grid; grid-template-columns: auto 1fr; gap: 8px 10px; align-items: center; }
+.ewm-doc .ewm-stackfilm { grid-column: 1 / -1; }
+.ewm-doc > .ic { width: 22px; height: 22px; }
+.ewm-stackfilm { position: relative; padding: 0 6px 6px 0; }
+.ewm-stackfilm::before, .ewm-stackfilm::after { content: ""; position: absolute; inset: 6px 0 0 6px; border-radius: 4px; border: 1px solid var(--edge); background: #0a0d12; z-index: 0; }
+.ewm-stackfilm::after { inset: 3px 3px 3px 3px; }
+.ewm-stackfilm .ewm-film { position: relative; z-index: 1; }
+.ewm-map { position: relative; height: 92px; margin: 0 6px; }
+.ewm-map .rule { position: absolute; left: 0; right: 0; top: 22px; height: 8px; border-bottom: 1px solid rgba(255,255,255,.45);
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.45) 0 1px, transparent 1px 7.14%); }
+.ewm-map b { position: absolute; top: 0; transform: translateX(-50%); font-size: 11.5px; font-weight: 600; }
+.ewm-map img { position: absolute; top: 36px; width: 23%; aspect-ratio: 16/9; transform: translateX(-50%); border-radius: 3px; border: 1px solid color-mix(in srgb, var(--acc) 60%, transparent); box-shadow: 0 0 12px color-mix(in srgb, var(--acc) 30%, transparent); }
+.ewm-map .gap { position: absolute; top: 30px; height: 36px; border-left: 1px dashed rgba(255,255,255,.4); }
+.ewm-clip { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; }
+.ewm-clip > .ic { width: 22px; height: 22px; }
+.ewm-bars { display: grid; grid-template-columns: 20px 1fr; gap: 5px 6px; align-items: center; font-size: 11px; color: var(--soft); }
+.ewm-bars .rs { grid-column: 2; font-size: 11px; position: relative; padding-left: 6px; border-left: 1px dashed rgba(255,255,255,.4); }
+.ewm-bars .bar { height: 8px; border-radius: 2px; }
+.ewm-bars .p1 { width: 62%; background: var(--acc); box-shadow: 0 0 10px color-mix(in srgb, var(--acc) 50%, transparent); }
+.ewm-bars .p2 { width: 100%; background: color-mix(in srgb, var(--acc) 40%, #2a3340); }
+.ewm-ticks2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ewm-ticks2 b { display: block; font-size: 12px; color: color-mix(in srgb, var(--acc) 80%, #fff); margin-bottom: 8px; }
+.ewm-tk { position: relative; height: 22px; }
+.ewm-tk .base { position: absolute; left: 0; right: 0; bottom: 3px; height: 8px; border-bottom: 1px solid rgba(255,255,255,.45);
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.45) 0 1px, transparent 1px 12.5%); }
+.ewm-tk .frame { position: absolute; bottom: 12px; height: 6px; border: 1.5px solid var(--acc); border-bottom: 0; }
+.ewm-tk .pt { position: absolute; bottom: 3px; width: 0; height: 16px; border-left: 1px dashed rgba(255,255,255,.5); }
+.ewm-tk .pt::before { content: ""; position: absolute; top: -3px; left: -3px; width: 5px; height: 5px; border-radius: 50%; background: var(--acc); }
+
+@media (max-width: 1100px) {
+  .ewm-stages { grid-template-columns: 1fr 1fr; gap: 18px; }
+  .ewm-link { display: none; }
+  .ewm-games { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .ewm { padding: 16px; }
+  .ewm-stages { grid-template-columns: 1fr; }
+  .ewm-link { display: none; }
+  .ewm-hub { height: 70px; }
+  .ewm-hub svg { display: none; }
+  .ewm-two, .ewm-ticks2 { grid-template-columns: 1fr; }
+}
 
 @media (max-width: 900px) {
   nav.top .links { display: none; }
@@ -444,14 +618,147 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
         <div class="trailer reveal"><video src="static/dataset/trailer.mp4" poster="static/dataset/trailer.jpg" controls muted playsinline preload="none"></video></div>
       </div>
 
-      <div style="margin-top:56px">
-        <h3 class="reveal">Replay decoding pipelines</h3>
-        <div class="tabs reveal" role="tablist" id="pipe-tabs">
-          <button role="tab" aria-selected="true" data-img="static/dataset/pipeline-counter-strike2.jpg">Counter-Strike 2</button>
-          <button role="tab" aria-selected="false" data-img="static/dataset/pipeline-dota2.jpg">Dota 2</button>
-          <button role="tab" aria-selected="false" data-img="static/dataset/pipeline-starcraft2.jpg">StarCraft II</button>
+      <div style="margin-top:64px">
+        <h3 class="reveal">How the dataset is built</h3>
+        <p class="reveal" style="color:var(--muted);max-width:820px">Replays are executed or parsed per player, split into video and record streams, and associated on the replay clock; each game then needs its own way of doing it.</p>
+        <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+          <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/></symbol>
+          <symbol id="i-cursor" viewBox="0 0 24 24"><path d="M4 4l7 17 2.5-7.5L21 11z"/></symbol>
+          <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+          <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
+          <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></symbol>
+          <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+          <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></symbol>
+          <symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h6"/></symbol>
+          <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></symbol>
+          <symbol id="i-loop" viewBox="0 0 24 24"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></symbol>
+          <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+          <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></symbol>
+          <symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/></symbol>
+        </svg>
+
+        <div class="ewm ewm-bleed reveal" role="img" aria-label="Dataset construction: replay execution and extraction, video and record streams, replay-clock association, paired outputs, with game-specific implementations for StarCraft II, Dota 2 and Counter-Strike 2">
+          <div class="ewm-stages">
+            <div class="ewm-stage">
+              <div class="ewm-head"><span class="ewm-num">1</span>Replay execution &amp; extraction</div>
+              <div class="ewm-s1">
+                <div class="ewm-replays"><b>Replays</b><small>SC2 / Dota&nbsp;2<br>/ CS2</small></div>
+                <svg class="ewm-fork" viewBox="0 0 34 150" preserveAspectRatio="none"><path d="M0 75 H12 V30 H34 M12 75 V120 H34"/></svg>
+                <div class="stack">
+                  <div class="ewm-box"><svg class="ic"><use href="#i-monitor"/></svg><div><b>Game client</b><small>SC2 observations</small></div></div>
+                  <div class="ewm-box"><svg class="ic"><use href="#i-doc"/></svg><div><b>Replay parser</b><small>Dota 2 / CS2</small></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="ewm-link"><i></i></div>
+
+            <div class="ewm-stage">
+              <div class="ewm-head"><span class="ewm-num">2</span>Video and record streams</div>
+              <div class="ewm-s2">
+                <div class="ewm-label"><svg class="ic"><use href="#i-film"/></svg>Video</div>
+                <div class="films">
+                  <div class="pl"><em>P1</em><div class="ewm-film"><img src="static/dataset/pipe/sc2_p1_0.jpg" alt=""><img src="static/dataset/pipe/sc2_p1_1.jpg" alt=""><img src="static/dataset/pipe/sc2_p1_2.jpg" alt=""><span class="sheen"></span></div></div>
+                  <div class="pl"><em>P2</em><div class="ewm-film"><img src="static/dataset/pipe/sc2_p2_0.jpg" alt=""><img src="static/dataset/pipe/sc2_p2_1.jpg" alt=""><img src="static/dataset/pipe/sc2_p2_2.jpg" alt=""><span class="sheen"></span></div></div>
+                </div>
+                <div class="ewm-label"><svg class="ic"><use href="#i-cursor"/></svg>Actions</div>
+                <div class="ewm-table"><div class="h"><span><svg class="ic"><use href="#i-clock"/></svg>time</span><span><svg class="ic"><use href="#i-user"/></svg>player</span><span><svg class="ic"><use href="#i-cursor"/></svg>action</span></div><div class="r"><span></span><span></span><span></span></div><div class="r"><span></span><span></span><span></span></div></div>
+                <div class="ewm-label"><svg class="ic"><use href="#i-db"/></svg>State / events</div>
+                <div class="ewm-table"><div class="h"><span><svg class="ic"><use href="#i-clock"/></svg>time</span><span><svg class="ic"><use href="#i-layers"/></svg>type</span><span><svg class="ic"><use href="#i-db"/></svg>data</span></div><div class="r"><span></span><span></span><span></span></div><div class="r"><span></span><span></span><span></span></div></div>
+              </div>
+            </div>
+            <div class="ewm-link mid"><i></i></div>
+
+            <div class="ewm-stage">
+              <div class="ewm-head"><span class="ewm-num">3</span>Replay-clock association</div>
+              <div class="ewm-legend"><span><svg class="ic"><use href="#i-layers"/></svg>match</span><span><svg class="ic"><use href="#i-user"/></svg>player</span><span><svg class="ic"><use href="#i-clock"/></svg>replay time</span></div>
+              <div class="ewm-clock">
+                <span></span>
+                <div class="ewm-ruler"><div class="ticks"></div><b style="left:16.7%">t0</b><b style="left:50%">t1</b><b style="left:83.3%">t2</b></div>
+                <span class="lbl">P1</span>
+                <div class="ewm-film"><img src="static/dataset/pipe/sc2_p1_0.jpg" alt=""><img src="static/dataset/pipe/sc2_p1_1.jpg" alt=""><img src="static/dataset/pipe/sc2_p1_2.jpg" alt=""><span class="ewm-dot" style="left:16.7%;--p:.167"></span><span class="ewm-dot" style="left:50%;--p:.5"></span><span class="ewm-dot" style="left:83.3%;--p:.833"></span></div>
+                <span class="lbl">P2</span>
+                <div class="ewm-film"><img src="static/dataset/pipe/sc2_p2_0.jpg" alt=""><img src="static/dataset/pipe/sc2_p2_1.jpg" alt=""><img src="static/dataset/pipe/sc2_p2_2.jpg" alt=""><span class="ewm-dot" style="left:16.7%;--p:.167"></span><span class="ewm-dot" style="left:50%;--p:.5"></span><span class="ewm-dot" style="left:83.3%;--p:.833"></span></div>
+                <span class="lbl">Actions</span>
+                <div class="ewm-track"><span class="ewm-dot" style="left:16.7%;--p:.167"></span><span class="ewm-dot" style="left:50%;--p:.5"></span><span class="ewm-dot" style="left:83.3%;--p:.833"></span></div>
+                <span class="lbl">State / events</span>
+                <div class="ewm-track"><span class="ewm-dot" style="left:16.7%;--p:.167"></span><span class="ewm-dot" style="left:50%;--p:.5"></span><span class="ewm-dot" style="left:83.3%;--p:.833"></span></div>
+                <div class="ewm-vlines"><i style="left:16.7%"></i><i style="left:50%"></i><i style="left:83.3%"></i><span class="ewm-playhead"></span></div>
+              </div>
+            </div>
+            <div class="ewm-link"><i></i></div>
+
+            <div class="ewm-stage">
+              <div class="ewm-head"><span class="ewm-num">4</span>Paired outputs</div>
+              <div class="ewm-out">
+                <div class="item"><img src="static/dataset/pipe/sc2_p1_1.jpg" alt=""><div class="ewm-label"><svg class="ic"><use href="#i-film"/></svg>Video</div></div>
+                <div class="item"><div class="ewm-table" style="--cols:2"><div class="h"><span>time</span><span>data</span></div><div class="r"><span></span><span></span></div></div><div class="ewm-label"><svg class="ic"><use href="#i-db"/></svg>Records</div></div>
+                <div class="item"><div class="ewm-arrow"></div><div class="ewm-label"><svg class="ic"><use href="#i-link"/></svg>Alignment</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ewm-hub">
+            <svg viewBox="0 0 1000 112" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M120 0 V22 H880 V0 M500 22 V38"/>
+              <path d="M500 74 V90 M167 112 V90 H833 V112 M500 90 V112"/>
+            </svg>
+            <div class="ewm-pill">Game-specific implementations</div>
+          </div>
+
+          <div class="ewm-games">
+            <article class="ewm-game sc2">
+              <h4>StarCraft II</h4>
+              <div class="top">
+                <div class="thumb"><img src="static/dataset/pipe/thumb_starcraft2.jpg" alt="StarCraft II"></div>
+                <div class="ewm-sub"><header>Matched build / per-loop observations</header>
+                  <div class="ewm-loop"><span class="k"><svg class="ic"><use href="#i-loop"/></svg>Game loop</span><span class="arr">&#10140;</span>
+                    <div class="ewm-film"><img src="static/dataset/pipe/sc2_p1_0.jpg" alt=""><img src="static/dataset/pipe/sc2_p1_1.jpg" alt=""><img src="static/dataset/pipe/sc2_p1_2.jpg" alt=""><span class="sheen"></span></div></div>
+                </div>
+              </div>
+              <div class="ewm-sub"><header>Fog of war / live and remembered observations</header>
+                <div class="ewm-two">
+                  <div class="ewm-tile on"><svg class="ic"><use href="#i-eye"/></svg><div><b>Live observation</b><small>Current entity state</small></div></div>
+                  <div class="ewm-tile"><svg class="ic"><use href="#i-history"/></svg><div><b>Snapshot</b><small>Last-seen information</small></div></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="ewm-game dota">
+              <h4>Dota 2</h4>
+              <div class="top">
+                <div class="thumb"><img src="static/dataset/pipe/thumb_dota2.jpg" alt="Dota 2"></div>
+                <div class="ewm-sub"><header>Entity / message parsing / 10 player views</header>
+                  <div class="ewm-doc"><svg class="ic"><use href="#i-doc"/></svg>
+                    <div class="ewm-table" style="--cols:2"><div class="h"><span>entity</span><span>message</span></div><div class="r"><span></span><span></span></div></div>
+                    <div class="ewm-stackfilm"><div class="ewm-film"><img src="static/dataset/pipe/dota_0.jpg" alt=""><img src="static/dataset/pipe/dota_1.jpg" alt=""><span class="sheen"></span></div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="ewm-sub"><header>Explicit frame-to-tick mapping</header>
+                <div><div class="ewm-map"><div class="rule"></div><b style="left:12%">t0</b><b style="left:50%">t1</b><b style="left:88%">t2</b>
+                  <img src="static/dataset/pipe/dota_2.jpg" alt="" style="left:12%"><span class="gap" style="left:50%"></span><img src="static/dataset/pipe/dota_3.jpg" alt="" style="left:88%"></div></div>
+              </div>
+            </article>
+
+            <article class="ewm-game cs2">
+              <h4>Counter-Strike 2</h4>
+              <div class="top">
+                <div class="thumb"><img src="static/dataset/pipe/thumb_counter-strike2.jpg" alt="Counter-Strike 2"></div>
+                <div class="ewm-sub"><header>Demo parsing / round and player clips</header>
+                  <div class="ewm-clip"><svg class="ic"><use href="#i-doc"/></svg>
+                    <div class="ewm-bars"><span class="rs">Round start</span><span>P1</span><div class="bar p1"></div><span>P2</span><div class="bar p2"></div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="ewm-sub"><header>Frame-to-tick association</header>
+                <div class="ewm-ticks2">
+                  <div><b>Core: 4 ticks / frame</b><div class="ewm-tk"><div class="base"></div><span class="frame" style="left:0;width:50%"></span><span class="frame" style="left:50%;width:50%"></span></div></div>
+                  <div><b>Extension: explicit mapping</b><div class="ewm-tk"><div class="base"></div><span class="pt" style="left:12%"></span><span class="pt" style="left:43%"></span><span class="pt" style="left:79%"></span></div></div>
+                </div>
+              </div>
+            </article>
+          </div>
         </div>
-        <div class="pipeline reveal"><img id="pipe-img" src="static/dataset/pipeline-counter-strike2.jpg" alt="Replay decoding pipeline" loading="lazy"></div>
       </div>
 
       <div class="two" style="margin-top:56px">
@@ -617,13 +924,6 @@ const counter = new IntersectionObserver(entries => {
   }
 }, { threshold: 0.6 });
 document.querySelectorAll("[data-count]").forEach(el => counter.observe(el));
-
-// pipeline tabs
-const pipeImg = document.getElementById("pipe-img");
-document.querySelectorAll("#pipe-tabs button").forEach(button => button.addEventListener("click", () => {
-  document.querySelectorAll("#pipe-tabs button").forEach(b => b.setAttribute("aria-selected", String(b === button)));
-  pipeImg.src = button.dataset.img;
-}));
 
 // copy BibTeX
 document.getElementById("copy-bib").addEventListener("click", async event => {
