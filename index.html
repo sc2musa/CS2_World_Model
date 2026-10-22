@@ -213,17 +213,65 @@ p { margin: 0 0 14px; }
 .clip figcaption { display: flex; justify-content: space-between; color: var(--muted); font-size: 14px; margin-top: 8px; }
 .clip figcaption b { color: var(--fg); font-weight: 600; }
 
-/* ---------- multi-view placeholder ---------- */
-.soon {
-  position: relative; overflow: hidden; border-radius: var(--radius); border: 1px dashed var(--line-strong); padding: 46px 20px; text-align: center; color: var(--muted);
-  background: repeating-linear-gradient(135deg, rgba(255,255,255,.02) 0 12px, transparent 12px 24px);
+/* ---------- multi-view ---------- */
+.mv-wrap { max-width: 1640px; }
+.mv-facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: -8px 0 28px; color: var(--muted); font-size: 14px; }
+.mv-facts b { color: var(--fg); font-size: 20px; font-weight: 850; margin-right: 6px; }
+.mv-viewer { position: relative; border-radius: 18px; padding: 14px; border: 1px solid var(--line-strong);
+  background: linear-gradient(180deg, rgba(16,21,30,.92), rgba(9,12,18,.96));
+  box-shadow: 0 40px 100px rgba(0,0,0,.5), 0 0 0 1px rgba(58,214,255,.06), 0 0 70px rgba(58,214,255,.07); }
+.mv-head { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; justify-content: space-between; margin: 2px 4px 14px; }
+.mv-title { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.mv-title strong { font-size: 20px; font-weight: 850; }
+.mv-title span { color: var(--muted); font-size: 14px; }
+.mv-sides { display: inline-flex; gap: 6px; }
+.side { display: inline-block; padding: 1px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 800; letter-spacing: .04em; }
+.side.T { background: rgba(255,170,60,.16); color: #ffc47a; border: 1px solid rgba(255,170,60,.4); }
+.side.CT { background: rgba(80,160,255,.16); color: #9cc8ff; border: 1px solid rgba(80,160,255,.4); }
+.mv-stage { position: relative; overflow: hidden; border-radius: 10px; background: #000; margin: 0 auto; cursor: pointer; }
+.mv-stage video { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; object-fit: fill; }
+.mv-stage[data-view="gen"] video, .mv-stage[data-view="real"] video { height: 200%; }
+.mv-stage[data-view="gen"] video { transform: translateY(-50%); }
+.mv-half { position: absolute; left: 0; right: 0; pointer-events: none; }
+.mv-stage[data-view="both"] .mv-half.real { top: 0; height: 50%; }
+.mv-stage[data-view="both"] .mv-half.gen { top: 50%; height: 50%; }
+.mv-stage[data-view="gen"] .mv-half.real, .mv-stage[data-view="real"] .mv-half.gen { display: none; }
+.mv-stage[data-view="gen"] .mv-half.gen, .mv-stage[data-view="real"] .mv-half.real { top: 0; height: 100%; }
+.mv-stage[data-view="both"] .mv-half.gen { border-top: 2px solid rgba(255,154,60,.85); box-shadow: 0 -1px 16px rgba(255,154,60,.45); }
+.mv-tile { position: absolute; outline: 1px solid rgba(0,0,0,.65); }
+.mv-tile .lab { position: absolute; left: 6px; top: 6px; display: inline-flex; gap: 5px; align-items: center; padding: 2px 7px 2px 5px; border-radius: 6px;
+  background: rgba(0,0,0,.6); font-size: 11.5px; font-weight: 700; backdrop-filter: blur(3px); }
+.mv-tile .lab i { width: 7px; height: 7px; border-radius: 50%; }
+.mv-tile .lab i.T { background: #ffb347; box-shadow: 0 0 8px #ffb347; } .mv-tile .lab i.CT { background: #6fb2ff; box-shadow: 0 0 8px #6fb2ff; }
+.mv-row { position: absolute; right: 8px; top: 8px; padding: 3px 10px; border-radius: 7px; font-size: 12px; font-weight: 800; letter-spacing: .03em; z-index: 1; }
+.mv-half.real .mv-row { background: rgba(0,0,0,.7); }
+.mv-half.gen .mv-row { background: rgba(255,154,60,.94); color: #140b02; }
+.mv-play { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; transition: opacity .25s; pointer-events: none; }
+.mv-play svg { width: 64px; height: 64px; padding: 16px; border-radius: 50%; background: rgba(0,0,0,.55); fill: #fff; backdrop-filter: blur(4px); }
+.mv-stage.paused .mv-play { opacity: 1; }
+.mv-bar { position: relative; height: 18px; margin: 10px 2px 0; cursor: pointer; touch-action: none; }
+.mv-bar::before { content: ""; position: absolute; left: 0; right: 0; top: 8px; height: 3px; border-radius: 3px; background: rgba(255,255,255,.12); }
+.mv-bar i { position: absolute; left: 0; top: 8px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, var(--cyan), var(--orange)); box-shadow: 0 0 10px rgba(255,154,60,.5); }
+.mv-bar .ticks { position: absolute; left: 0; right: 0; top: 13px; display: flex; justify-content: space-between; color: var(--muted); font-size: 10.5px; pointer-events: none; }
+.mv-picker { display: flex; flex-wrap: wrap; gap: 10px 20px; justify-content: space-between; align-items: center; margin: 26px 0 14px; }
+.mv-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.mv-card { position: relative; padding: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel-solid); color: var(--fg);
+  font: inherit; text-align: left; cursor: pointer; transition: transform .25s, border-color .25s, box-shadow .25s; }
+.mv-card:hover { transform: translateY(-3px); border-color: rgba(58,214,255,.5); }
+.mv-card[aria-pressed="true"] { border-color: var(--orange); box-shadow: 0 0 0 1px var(--orange), 0 0 28px rgba(255,154,60,.25); }
+.mv-card .thumb { aspect-ratio: 16 / 7; background: #000 center / cover no-repeat; }
+.mv-card .meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; font-size: 13px; }
+.mv-card .meta b { font-weight: 750; }
+.mv-card .meta span { color: var(--muted); font-size: 12px; }
+.mv-card .count { position: absolute; top: 8px; left: 8px; padding: 1px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 800; background: rgba(0,0,0,.65); backdrop-filter: blur(3px); }
+.mv-note { color: var(--muted); font-size: 13.5px; margin: 14px 2px 0; }
+@media (max-width: 600px) {
+  .mv-viewer { padding: 10px; }
+  #mv-mode button { padding: 6px 10px; font-size: 12px; white-space: nowrap; }
+  .mv-tile .lab { left: 3px; top: 3px; padding: 1px 5px 1px 4px; font-size: 9.5px; }
+  .mv-row { right: 4px; top: 4px; padding: 2px 6px; font-size: 10px; }
+  .mv-cards { grid-template-columns: repeat(2, 1fr); }
 }
-.soon::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(58,214,255,.08), transparent); animation: sweep 3s linear infinite; }
-@keyframes sweep { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
-.views-demo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 0 auto 18px; max-width: 520px; }
-.views-demo i { aspect-ratio: 16/9; border-radius: 4px; background: rgba(255,255,255,.06); border: 1px solid var(--line); animation: blink 2.4s infinite; }
-.views-demo i:nth-child(2n) { animation-delay: .4s; } .views-demo i:nth-child(3n) { animation-delay: .8s; }
-@keyframes blink { 50% { background: rgba(58,214,255,.18); border-color: rgba(58,214,255,.4); } }
 
 /* ---------- dataset ---------- */
 #dataset { padding-top: 0; }
@@ -244,6 +292,28 @@ p { margin: 0 0 14px; }
 .game img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; transition: transform .6s; }
 .game:hover img { transform: scale(1.05); }
 .game .body { padding: 18px 20px 20px; }
+.game-media { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #000; }
+.game-media video { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s; }
+.game:hover .game-media video { transform: scale(1.05); }
+.live { position: absolute; left: 10px; top: 10px; display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 7px;
+  background: rgba(0,0,0,.6); backdrop-filter: blur(4px); font-size: 11.5px; font-weight: 700; letter-spacing: .03em; }
+.live i { width: 7px; height: 7px; border-radius: 50%; background: #ff4d4d; box-shadow: 0 0 10px #ff4d4d; animation: pulse 1.6s infinite; }
+.sync { margin-top: 44px; padding: 16px; border-radius: 18px; border: 1px solid var(--line-strong);
+  background: linear-gradient(180deg, rgba(16,21,30,.9), rgba(9,12,18,.95)); box-shadow: 0 40px 100px rgba(0,0,0,.45); }
+.sync-head { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between; margin: 4px 4px 14px; }
+.sync-head h3 { margin: 0 0 4px; font-size: 22px; }
+.sync-head p { margin: 0; color: var(--muted); font-size: 14.5px; }
+.sync-stage { position: relative; border-radius: 10px; overflow: hidden; background: #000; }
+.sync-stage video { width: 100%; display: block; }
+.sync-tile { position: absolute; outline: 1px solid rgba(0,0,0,.7); pointer-events: none; }
+.sync-tile span { position: absolute; left: 6px; bottom: 6px; padding: 2px 7px; border-radius: 6px; background: rgba(0,0,0,.65); font-size: 11.5px; font-weight: 700; }
+.sync-cap { color: var(--muted); font-size: 13.5px; margin: 12px 4px 2px; }
+@media (max-width: 600px) {
+  #sync-tabs { flex-wrap: wrap; border-radius: 14px; }
+  #sync-tabs button { font-size: 12px; padding: 6px 10px; }
+  .sync { padding: 10px; }
+  .sync-tile span { font-size: 9px; left: 3px; bottom: 3px; padding: 1px 4px; }
+}
 .game .genre { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .game dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 12px 0 0; font-size: 14px; }
 .game dt { color: var(--muted); }
@@ -551,14 +621,34 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
     <div class="gallery" id="gallery" data-view="both"></div>
   </section>
 
-  <section id="multiview" class="wrap">
+  <section id="multiview" class="wrap mv-wrap">
     <p class="kicker reveal">Multi-view</p>
     <h2 class="reveal">Several players, one moment</h2>
-    <p class="lead reveal">All players in a round share one game state. Rendering each of their views from that shared state should give pictures that agree: the same wall, the same opponent, seen through different eyes.</p>
-    <div class="soon reveal">
-      <div class="views-demo"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      Multi-player results are being rendered and will appear here.
+    <p class="lead reveal">All players in a round share one game state. Each player's view below is rendered on its own, with its own random noise; the only thing tying the views together is that shared state. They still agree: the same wall, the same opponent, seen through different eyes.</p>
+    <div class="mv-facts reveal" id="mv-facts"></div>
+    <div class="mv-viewer reveal">
+      <div class="mv-head">
+        <div class="mv-title"><strong id="mv-name"></strong><span id="mv-sub"></span><span class="mv-sides" id="mv-sides"></span></div>
+        <div class="views" role="group" aria-label="Multi-view mode" id="mv-mode">
+          <button type="button" data-view="both" aria-pressed="true">Real &amp; generated</button>
+          <button type="button" data-view="gen" aria-pressed="false">Generated only</button>
+          <button type="button" data-view="real" aria-pressed="false">Real only</button>
+        </div>
+      </div>
+      <div class="mv-stage" id="mv-stage" data-view="both">
+        <video id="mv-video" muted loop playsinline preload="none"></video>
+        <div class="mv-half real"><span class="mv-row">Real</span></div>
+        <div class="mv-half gen"><span class="mv-row">Generated</span></div>
+        <div class="mv-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="mv-bar" id="mv-bar" aria-label="Seek"><i id="mv-progress"></i><div class="ticks"><span>0 s</span><span>2 s</span><span>4 s</span><span>6 s</span><span>8 s</span></div></div>
     </div>
+    <div class="mv-picker reveal">
+      <div class="filters" role="group" aria-label="Players per round" id="mv-filter"></div>
+      <span class="mv-note" style="margin:0">Click the video to pause &middot; press and hold to flash the real views</span>
+    </div>
+    <div class="mv-cards" id="mv-cards"></div>
+    <p class="mv-note">Held-out validation rounds, 1280&times;720 per view at 32&nbsp;fps for eight seconds (shown at half size). T and CT mark each player's side.</p>
   </section>
 
   <section id="dataset">
@@ -589,29 +679,38 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
     <div class="wrap">
       <div class="games">
         <article class="game reveal" data-accent="sc2">
-          <img src="static/dataset/starcraft2-preview.jpg" alt="StarCraft II player view" loading="lazy">
+          <div class="game-media"><video class="lazy-bg" data-src="static/dataset/card_sc2.mp4" poster="static/dataset/starcraft2-preview.jpg" muted loop playsinline preload="none" aria-label="StarCraft II player view"></video><span class="live"><i></i>Player view</span></div>
           <div class="body"><div class="genre">RTS &middot; 1v1</div><h3>StarCraft II</h3>
             <dl><dt>Matches</dt><dd>2,145</dd><dt>Gameplay</dt><dd>395.8 h</dd><dt>Player views</dt><dd>791.5 h</dd>
                 <dt>Views</dt><dd>2 per match</dd><dt>Structured</dt><dd>~59M trajectory steps</dd></dl></div>
         </article>
         <article class="game reveal" data-accent="dota">
-          <img src="static/dataset/dota2-preview.jpg" alt="Dota 2 player view" loading="lazy">
+          <div class="game-media"><video class="lazy-bg" data-src="static/dataset/card_dota2.mp4" poster="static/dataset/dota2-preview.jpg" muted loop playsinline preload="none" aria-label="Dota 2 player view"></video><span class="live"><i></i>Player view</span></div>
           <div class="body"><div class="genre">MOBA &middot; 5v5</div><h3>Dota 2</h3>
             <dl><dt>Matches</dt><dd>273</dd><dt>Gameplay</dt><dd>195.5 h</dd><dt>Player views</dt><dd>1,955.0 h</dd>
                 <dt>Views</dt><dd>up to 10 per match</dd><dt>Structured</dt><dd>~7.7B state changes, 220M events</dd></dl></div>
         </article>
         <article class="game reveal" data-accent="cs2">
-          <img src="static/dataset/counter-strike2-preview.jpg" alt="Counter-Strike 2 player view" loading="lazy">
+          <div class="game-media"><video class="lazy-bg" data-src="static/dataset/card_cs2.mp4" poster="static/dataset/counter-strike2-preview.jpg" muted loop playsinline preload="none" aria-label="Counter-Strike 2 player view"></video><span class="live"><i></i>Player view</span></div>
           <div class="body"><div class="genre">FPS &middot; 5v5</div><h3>Counter-Strike 2</h3>
             <dl><dt>Matches</dt><dd>50</dd><dt>Gameplay</dt><dd>34.8 h</dd><dt>Player views</dt><dd>138.4 h</dd>
                 <dt>Views</dt><dd>7,623 round POV clips</dd><dt>Structured</dt><dd>64 tick/s state, 16 fps video</dd></dl></div>
         </article>
       </div>
 
-      <figure class="wide reveal">
-        <img src="static/dataset/teaser.jpg" alt="Synchronized player views in StarCraft II, Dota 2 and Counter-Strike 2" loading="lazy">
-        <figcaption>Every player's view at the same moment: both players in StarCraft&nbsp;II, all ten in a Dota&nbsp;2 team fight, and all ten in one Counter-Strike&nbsp;2 round.</figcaption>
-      </figure>
+      <div class="sync reveal">
+        <div class="sync-head">
+          <div><h3>Every player, the same moment</h3>
+            <p>Real replays decoded per player and lined up on the replay clock. Pick a game:</p></div>
+          <div class="views" role="group" aria-label="Game" id="sync-tabs">
+            <button type="button" data-game="sc2" aria-pressed="true">StarCraft&nbsp;II &middot; 2 views</button>
+            <button type="button" data-game="dota2" aria-pressed="false">Dota&nbsp;2 &middot; 10 views</button>
+            <button type="button" data-game="cs2" aria-pressed="false">Counter-Strike&nbsp;2 &middot; 10 views</button>
+          </div>
+        </div>
+        <div class="sync-stage" id="sync-stage"><video id="sync-video" muted loop playsinline preload="none"></video><div id="sync-tiles"></div></div>
+        <p class="sync-cap" id="sync-cap"></p>
+      </div>
 
       <div style="margin-top:56px">
         <h3 class="reveal">Trailer</h3>
@@ -874,6 +973,121 @@ for (const map of ["All", ...Object.keys(CLIPS)]) {
 for (const [map, clips] of Object.entries(CLIPS)) for (const clip of clips) gallery.appendChild(clipCard(map, clip));
 show("All");
 
+// multi-view viewer: one file per round, real views stacked above generated views
+const MULTIVIEW = [{"name":"overpass_k02_w01","map":"de_overpass","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]},{"name":"mirage_k02_w03","map":"de_mirage","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"CT"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"CT"}]},{"name":"dust2_k02_w02","map":"de_dust2","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]},{"name":"anubis_k05_w02","map":"de_anubis","views":5,"aspect":2.1333,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":0.6,"side":"CT"},{"x":0.5,"y":0.0,"w":0.5,"h":0.6,"side":"CT"},{"x":0.0,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.3333,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.6667,"y":0.6,"w":0.3333,"h":0.4,"side":"T"}]},{"name":"dust2_k05_w01","map":"de_dust2","views":5,"aspect":2.1333,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":0.6,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":0.6,"side":"T"},{"x":0.0,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.3333,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.6667,"y":0.6,"w":0.3333,"h":0.4,"side":"T"}]},{"name":"mirage_k10_w01","map":"de_mirage","views":10,"aspect":4.4444,"tiles":[{"x":0.0,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.2,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.4,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.6,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.8,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.0,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.2,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.4,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.6,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.8,"y":0.5,"w":0.2,"h":0.5,"side":"CT"}]},{"name":"ancient_k02_w01","map":"de_ancient","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]},{"name":"overpass_k03_w01","map":"de_overpass","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"anubis_k03_w02","map":"de_anubis","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"inferno_k03_w01","map":"de_inferno","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"CT"}]},{"name":"nuke_k03_w01","map":"de_nuke","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"CT"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"mirage_k03_w01","map":"de_mirage","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"inferno_k02_w03","map":"de_inferno","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]}];
+const MAP_NAMES = { de_ancient: "Ancient", de_anubis: "Anubis", de_dust2: "Dust II", de_inferno: "Inferno",
+                    de_mirage: "Mirage", de_nuke: "Nuke", de_overpass: "Overpass" };
+(() => {
+  const stage = document.getElementById("mv-stage");
+  const video = document.getElementById("mv-video");
+  const halves = { real: stage.querySelector(".mv-half.real"), gen: stage.querySelector(".mv-half.gen") };
+  const cards = document.getElementById("mv-cards");
+  const filter = document.getElementById("mv-filter");
+  const progress = document.getElementById("mv-progress");
+  const bar = document.getElementById("mv-bar");
+  let current = null, visible = false;
+
+  const sideCounts = w => ["T", "CT"].map(s => [s, w.tiles.filter(t => t.side === s).length]).filter(([, n]) => n);
+  document.getElementById("mv-facts").innerHTML =
+    `<span><b>${MULTIVIEW.length}</b>rounds</span>` +
+    `<span><b>${MULTIVIEW.reduce((n, w) => n + w.views, 0)}</b>player views</span>` +
+    `<span><b>${new Set(MULTIVIEW.map(w => w.map)).size}</b>maps</span>` +
+    `<span><b>2&ndash;10</b>players per round</span>`;
+
+  const fit = () => {
+    if (!current) return;
+    const both = stage.dataset.view === "both";
+    const ratio = current.aspect / (both ? 2 : 1);
+    const maxH = window.innerHeight * 0.78;
+    const width = Math.min(stage.parentElement.clientWidth - 28, maxH * ratio);
+    stage.style.width = `${width}px`;
+    stage.style.height = `${width / ratio}px`;
+  };
+  const tiles = w => w.tiles.map((t, i) =>
+    `<div class="mv-tile" style="left:${t.x * 100}%;top:${t.y * 100}%;width:${t.w * 100}%;height:${t.h * 100}%">` +
+    `<span class="lab"><i class="${t.side}"></i>P${i + 1} &middot; ${t.side}</span></div>`).join("");
+
+  function select(w, autoplay) {
+    current = w;
+    for (const card of cards.children) card.setAttribute("aria-pressed", String(card.dataset.name === w.name));
+    document.getElementById("mv-name").textContent = MAP_NAMES[w.map] || w.map;
+    document.getElementById("mv-sub").textContent = `${w.views} players · same moment`;
+    document.getElementById("mv-sides").innerHTML = sideCounts(w).map(([s, n]) => `<span class="side ${s}">${n} ${s}</span>`).join("");
+    for (const half of Object.values(halves)) {
+      half.querySelectorAll(".mv-tile").forEach(t => t.remove());
+      half.insertAdjacentHTML("beforeend", tiles(w));
+    }
+    video.poster = `static/multiview/${w.name}.jpg`;
+    video.src = `static/multiview/${w.name}.mp4`;
+    progress.style.width = "0";
+    fit();
+    if (autoplay || visible) video.play().catch(() => {});
+  }
+
+  function card(w) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "mv-card"; b.dataset.name = w.name; b.dataset.views = w.views;
+    b.innerHTML = `<div class="thumb" style="background-image:url(static/multiview/${w.name}.jpg)"></div>` +
+      `<span class="count">${w.views} players</span>` +
+      `<div class="meta"><b>${MAP_NAMES[w.map] || w.map}</b><span>${sideCounts(w).map(([s, n]) => `${n} ${s}`).join(" &middot; ")}</span></div>`;
+    b.addEventListener("click", () => { select(w, true); stage.scrollIntoView({ behavior: "smooth", block: "center" }); });
+    return b;
+  }
+  MULTIVIEW.forEach(w => cards.appendChild(card(w)));
+
+  const sizes = [...new Set(MULTIVIEW.map(w => w.views))].sort((a, b) => a - b);
+  for (const size of ["All", ...sizes]) {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = size === "All" ? "All" : `${size} players`;
+    b.setAttribute("aria-pressed", String(size === "All"));
+    b.addEventListener("click", () => {
+      filter.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+      for (const c of cards.children) c.hidden = size !== "All" && Number(c.dataset.views) !== size;
+    });
+    filter.appendChild(b);
+  }
+
+  document.querySelectorAll("#mv-mode button").forEach(button => button.addEventListener("click", () => {
+    document.querySelectorAll("#mv-mode button").forEach(b => b.setAttribute("aria-pressed", String(b === button)));
+    stage.dataset.view = button.dataset.view;
+    fit();
+  }));
+
+  // click toggles play; press and hold flashes the real views
+  let holdTimer = null, held = false, before = null;
+  stage.addEventListener("pointerdown", () => {
+    held = false;
+    holdTimer = setTimeout(() => { held = true; before = stage.dataset.view; stage.dataset.view = "real"; fit(); }, 280);
+  });
+  const release = () => {
+    clearTimeout(holdTimer);
+    if (held) { stage.dataset.view = before; fit(); }
+  };
+  stage.addEventListener("pointerup", () => {
+    release();
+    if (!held) video.paused ? video.play().catch(() => {}) : video.pause();
+  });
+  stage.addEventListener("pointerleave", release);
+  video.addEventListener("play", () => stage.classList.remove("paused"));
+  video.addEventListener("pause", () => stage.classList.add("paused"));
+  video.addEventListener("timeupdate", () => {
+    if (video.duration) progress.style.width = `${(video.currentTime / video.duration) * 100}%`;
+  });
+  const seek = e => {
+    const rect = bar.getBoundingClientRect();
+    if (video.duration) video.currentTime = Math.min(0.999, Math.max(0, (e.clientX - rect.left) / rect.width)) * video.duration;
+  };
+  bar.addEventListener("pointerdown", e => { bar.setPointerCapture(e.pointerId); seek(e); });
+  bar.addEventListener("pointermove", e => { if (e.buttons) seek(e); });
+
+  new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    if (visible) video.play().catch(() => {}); else video.pause();
+  }, { threshold: 0.25 }).observe(stage);
+  window.addEventListener("resize", fit);
+  if (MULTIVIEW.length) select(MULTIVIEW[0], false);
+})();
+
 // real-vs-generated wipe slider: one side-by-side video drawn into a canvas
 (() => {
   const shell = document.getElementById("slider");
@@ -924,6 +1138,39 @@ const counter = new IntersectionObserver(entries => {
   }
 }, { threshold: 0.6 });
 document.querySelectorAll("[data-count]").forEach(el => counter.observe(el));
+
+// dataset: synchronized player views, one grid video per game
+(() => {
+  const SYNC = {
+    sc2: { cols: 2, rows: 1, labels: ["Player 1 · Zerg", "Player 2 · Protoss"],
+           cap: "A tournament match on Pylon, Zerg against Protoss: both players' screens during a battle in which 728 units die within 20 seconds." },
+    dota2: { cols: 5, rows: 2, labels: Array.from({ length: 10 }, (_, i) => `Hero ${i + 1}`),
+             cap: "All ten heroes' screens during one team fight, six kills in 20 seconds; each slot's video is mapped to the same replay tick." },
+    cs2: { cols: 5, rows: 2, labels: Array.from({ length: 10 }, (_, i) => `Player ${i + 1}`),
+           cap: "All ten first-person views of one professional round on Nuke, eight kills in 20 seconds; each view is aligned to the round's state ticks." },
+  };
+  const stage = document.getElementById("sync-stage");
+  const video = document.getElementById("sync-video");
+  const tiles = document.getElementById("sync-tiles");
+  let visible = false;
+  function show(game) {
+    const g = SYNC[game];
+    document.querySelectorAll("#sync-tabs button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.game === game)));
+    tiles.innerHTML = g.labels.map((label, i) =>
+      `<div class="sync-tile" style="left:${(i % g.cols) / g.cols * 100}%;top:${Math.floor(i / g.cols) / g.rows * 100}%;` +
+      `width:${100 / g.cols}%;height:${100 / g.rows}%"><span>${label}</span></div>`).join("");
+    video.poster = `static/dataset/sync_${game}.jpg`;
+    video.src = `static/dataset/sync_${game}.mp4`;
+    document.getElementById("sync-cap").textContent = g.cap;
+    if (visible) video.play().catch(() => {});
+  }
+  document.querySelectorAll("#sync-tabs button").forEach(b => b.addEventListener("click", () => show(b.dataset.game)));
+  new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    if (visible) video.play().catch(() => {}); else video.pause();
+  }, { threshold: 0.25 }).observe(stage);
+  show("sc2");
+})();
 
 // copy BibTeX
 document.getElementById("copy-bib").addEventListener("click", async event => {
