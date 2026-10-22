@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CS2 World Model · 中文</title>
+<meta name="description" content="一份对局数据，还原选手眼中的整个战场。CS2 视频世界模型与电竞世界模型数据集。">
+<meta name="color-scheme" content="dark">
+<style>
+:root {
+  --bg: #07090d;
+  --bg-2: #0d1118;
+  --panel: rgba(18, 23, 32, 0.72);
+  --panel-solid: #121720;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --fg: #eef1f6;
+  --muted: #98a2b3;
+  --orange: #ff9a3c;
+  --orange-2: #ffb86b;
+  --cyan: #3ad6ff;
+  --glow-o: rgba(255, 154, 60, 0.35);
+  --glow-c: rgba(58, 214, 255, 0.28);
+  --radius: 14px;
+  --maxw: 1180px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg); overflow-x: hidden;
+  font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+        "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {  /* faint tactical grid behind everything */
+  content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+}
+body::after {  /* drifting colour glows */
+  content: ""; position: fixed; inset: -20%; z-index: -3; pointer-events: none;
+  background:
+    radial-gradient(40% 35% at 15% 20%, rgba(255,154,60,0.10), transparent 70%),
+    radial-gradient(35% 30% at 85% 60%, rgba(58,214,255,0.08), transparent 70%);
+  animation: drift 26s ease-in-out infinite alternate;
+}
+@keyframes drift { to { transform: translate3d(4%, -3%, 0) scale(1.08); } }
+a { color: var(--orange); text-decoration: none; }
+a:hover { color: var(--orange-2); }
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 16px; }
+
+/* ---------- nav ---------- */
+nav.top {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 12px 20px; transition: background .3s, border-color .3s, backdrop-filter .3s;
+  border-bottom: 1px solid transparent;
+}
+nav.top.scrolled { background: rgba(7, 9, 13, 0.72); backdrop-filter: blur(14px); border-color: var(--line); }
+nav.top .brand { font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--fg); font-size: 14px; }
+nav.top .brand span { color: var(--orange); }
+nav.top .links { display: flex; gap: 22px; font-size: 14px; }
+nav.top .links a { color: var(--muted); }
+nav.top .links a:hover { color: var(--fg); }
+nav.top .links { margin-left: auto; }
+nav.top .lang { padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--fg); font-size: 13px; font-weight: 700; }
+nav.top .lang:hover { border-color: var(--orange); color: var(--orange-2); }
+
+/* ---------- hero ---------- */
+.hero {
+  position: relative; min-height: 100vh; display: grid; place-items: center; overflow: hidden;
+  padding: 110px 16px 80px; text-align: center; isolation: isolate;
+}
+.hero-bg { position: absolute; inset: 0; z-index: -2; }
+.hero-bg video { width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); filter: saturate(1.1); }
+.hero::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(ellipse at center, rgba(7,9,13,0.55) 0%, rgba(7,9,13,0.86) 62%, var(--bg) 100%),
+    linear-gradient(180deg, rgba(7,9,13,0.4), rgba(7,9,13,0.1) 40%, var(--bg));
+}
+.hero::after {  /* scanlines */
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .35;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.35) 0 1px, transparent 1px 3px);
+}
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong); background: rgba(0,0,0,0.35); backdrop-filter: blur(6px);
+  font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--orange-2);
+}
+.eyebrow i { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 12px var(--orange); animation: pulse 1.8s infinite; }
+@keyframes pulse { 50% { opacity: .35; } }
+.hero h1 {
+  margin: 22px 0 14px; font-size: clamp(44px, 9vw, 108px); line-height: .95; font-weight: 900;
+  letter-spacing: -0.02em; text-transform: uppercase;
+  background: linear-gradient(180deg, #ffffff 30%, #c9d2e0 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero h1 em { font-style: normal; background: linear-gradient(90deg, var(--orange), var(--orange-2)); -webkit-background-clip: text; background-clip: text; }
+.hero .subtitle { font-size: clamp(17px, 2.3vw, 22px); color: #c6cdd8; max-width: 760px; margin: 0 auto 26px; }
+.authors { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 26px; font-size: 18px; font-weight: 600; margin: 0 0 6px; }
+.authors span { white-space: nowrap; }
+.affils { font-size: 13px; color: var(--muted); margin: 0 0 30px; display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 18px; }
+sup { font-size: .62em; color: var(--orange-2); }
+.btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 999px; font-size: 14px; font-weight: 700;
+  background: linear-gradient(90deg, var(--orange), #ff7a1a); color: #140b02; box-shadow: 0 8px 30px var(--glow-o);
+  transition: transform .2s, box-shadow .2s;
+}
+.btn:hover { color: #140b02; transform: translateY(-2px); box-shadow: 0 12px 40px var(--glow-o); }
+.btn.ghost { background: rgba(255,255,255,0.04); color: var(--fg); border: 1px solid var(--line-strong); box-shadow: none; backdrop-filter: blur(6px); }
+.btn.ghost:hover { border-color: var(--cyan); box-shadow: 0 0 24px var(--glow-c); color: var(--fg); }
+.btn svg { width: 16px; height: 16px; }
+.scroll-cue { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); color: var(--muted); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; }
+.scroll-cue::after { content: ""; display: block; width: 1px; height: 34px; margin: 8px auto 0; background: linear-gradient(var(--orange), transparent); animation: cue 2s infinite; }
+@keyframes cue { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+/* ---------- sections ---------- */
+section { padding: 96px 0 24px; position: relative; }
+.kicker { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--orange); font-weight: 700; margin: 0 0 10px; }
+h2 { font-size: clamp(30px, 4.4vw, 46px); line-height: 1.1; margin: 0 0 16px; font-weight: 850; letter-spacing: -0.01em; }
+h3 { font-size: 20px; margin: 0 0 8px; }
+.lead { font-size: 18px; color: #c6cdd8; max-width: 820px; margin: 0 0 30px; }
+p { margin: 0 0 14px; }
+
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .8s ease, transform .8s ease; }
+.reveal.in { opacity: 1; transform: none; }
+
+/* ---------- comparison slider ---------- */
+.slider-shell {
+  position: relative; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line-strong);
+  box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,154,60,.08), 0 0 60px rgba(255,154,60,.08);
+  aspect-ratio: 16 / 9; background: #000; cursor: ew-resize; touch-action: pan-y; user-select: none;
+}
+.slider-shell canvas { width: 100%; height: 100%; display: block; }
+.slider-shell video { display: none; }
+.slider-handle { position: absolute; top: 0; bottom: 0; width: 2px; background: #fff; box-shadow: 0 0 18px rgba(255,255,255,.7); pointer-events: none; }
+.slider-handle::after {
+  content: "\2194"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-size: 20px; color: #111;
+  background: #fff; box-shadow: 0 6px 24px rgba(0,0,0,.5);
+}
+.slider-label { position: absolute; top: 14px; padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; pointer-events: none; backdrop-filter: blur(4px); }
+.slider-label.l { left: 14px; background: rgba(0,0,0,.6); }
+.slider-label.r { right: 14px; background: rgba(255,154,60,.92); color: #140b02; }
+.slider-caption { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--muted); font-size: 14px; margin-top: 12px; }
+
+/* ---------- feature cards ---------- */
+.grid4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.card {
+  position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px;
+  backdrop-filter: blur(10px); transition: transform .3s, border-color .3s, box-shadow .3s;
+}
+.card:hover { transform: translateY(-4px); border-color: rgba(255,154,60,.45); box-shadow: 0 18px 50px rgba(0,0,0,.4), 0 0 30px rgba(255,154,60,.12); }
+.card .icon { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; margin-bottom: 14px;
+  background: linear-gradient(135deg, rgba(255,154,60,.22), rgba(58,214,255,.12)); border: 1px solid var(--line-strong); }
+.card .icon svg { width: 22px; height: 22px; stroke: var(--orange-2); }
+.card p { color: var(--muted); font-size: 15px; margin: 0; }
+
+/* ---------- conditioning flow ---------- */
+.flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 14px; margin-top: 34px; }
+.flow .col { display: grid; gap: 10px; }
+.chip { padding: 10px 14px; border-radius: 10px; background: var(--panel-solid); border: 1px solid var(--line); font-size: 14px; display: flex; align-items: center; gap: 10px; }
+.chip b { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); flex: none; }
+.core { text-align: center; padding: 26px 18px; border-radius: var(--radius); border: 1px solid rgba(255,154,60,.5);
+  background: radial-gradient(circle at 50% 0%, rgba(255,154,60,.25), rgba(18,23,32,.9) 70%); box-shadow: 0 0 50px rgba(255,154,60,.18); }
+.core strong { display: block; font-size: 20px; margin-bottom: 4px; }
+.core span { color: var(--muted); font-size: 13px; }
+.arrow { color: var(--orange); font-size: 26px; animation: nudge 1.6s ease-in-out infinite; }
+@keyframes nudge { 50% { transform: translateX(5px); } }
+.out { text-align: center; padding: 18px; border-radius: var(--radius); border: 1px solid var(--line-strong); background: var(--panel-solid); }
+.out strong { display: block; font-size: 18px; }
+.out span { color: var(--muted); font-size: 13px; }
+
+/* ---------- gallery ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 22px; }
+.filters button {
+  border: 1px solid var(--line-strong); background: rgba(255,255,255,.03); color: var(--fg); border-radius: 999px;
+  padding: 7px 16px; font: inherit; font-size: 14px; cursor: pointer; transition: all .2s;
+}
+.filters button:hover { border-color: var(--orange); }
+.filters button[aria-pressed="true"] { background: var(--orange); color: #140b02; border-color: var(--orange); box-shadow: 0 0 20px var(--glow-o); }
+.toolbar { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; align-items: center; margin: 0 0 22px; }
+.toolbar .filters { margin: 0; }
+.views { display: inline-flex; padding: 3px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.03); }
+.views button { border: 0; background: transparent; color: var(--muted); padding: 6px 14px; border-radius: 999px; font: inherit; font-size: 13px; cursor: pointer; }
+.views button[aria-pressed="true"] { background: var(--cyan); color: #031015; box-shadow: 0 0 16px var(--glow-c); }
+.gallery-wrap { max-width: 1640px; }
+.gallery { display: grid; gap: 26px; }
+.gallery[data-view="gen"], .gallery[data-view="real"] { grid-template-columns: repeat(auto-fit, minmax(min(100%, 640px), 1fr)); }
+.gallery[data-view="gen"] .clip-frame, .gallery[data-view="real"] .clip-frame { aspect-ratio: 16 / 9; }
+.gallery[data-view="gen"] .clip-frame video, .gallery[data-view="real"] .clip-frame video { width: 200%; max-width: none; }
+.gallery[data-view="gen"] .clip-frame video { transform: translateX(-50%); }
+.gallery[data-view="gen"] .clip-frame::after, .gallery[data-view="real"] .clip-frame::after,
+.gallery[data-view="gen"] .tag.left, .gallery[data-view="real"] .tag.right { display: none; }
+.gallery[data-view="gen"] .tag.right { left: 10px; }
+.fs { position: absolute; right: 10px; bottom: 10px; z-index: 2; width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line-strong);
+  background: rgba(0,0,0,.55); color: #fff; display: grid; place-items: center; cursor: pointer; opacity: 0; transition: opacity .2s; }
+.fs svg { width: 18px; height: 18px; }
+.clip:hover .fs, .fs:focus-visible { opacity: 1; }
+@media (hover: none) { .fs { opacity: 1; } }
+.clip { margin: 0; }
+.clip-frame {
+  position: relative; border-radius: var(--radius); overflow: hidden; background: #000; aspect-ratio: 32 / 9;
+  border: 1px solid var(--line); transition: border-color .3s, box-shadow .3s;
+}
+.clip:hover .clip-frame { border-color: rgba(255,154,60,.5); box-shadow: 0 0 40px rgba(255,154,60,.15); }
+.clip-frame video { width: 100%; height: 100%; display: block; object-fit: cover; }
+.clip-frame::after { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: rgba(255,255,255,.6); }
+.tag { position: absolute; top: 10px; padding: 3px 10px; border-radius: 7px; font-size: 12px; font-weight: 700; pointer-events: none; z-index: 1; }
+.tag.left { left: 10px; background: rgba(0,0,0,.62); }
+.tag.right { left: calc(50% + 10px); background: rgba(255,154,60,.92); color: #140b02; }
+.clip figcaption { display: flex; justify-content: space-between; color: var(--muted); font-size: 14px; margin-top: 8px; }
+.clip figcaption b { color: var(--fg); font-weight: 600; }
+
+/* ---------- multi-view ---------- */
+.mv-wrap { max-width: 1640px; }
+.mv-facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: -8px 0 28px; color: var(--muted); font-size: 14px; }
+.mv-facts b { color: var(--fg); font-size: 20px; font-weight: 850; margin-right: 6px; }
+.mv-viewer { position: relative; border-radius: 18px; padding: 14px; border: 1px solid var(--line-strong);
+  background: linear-gradient(180deg, rgba(16,21,30,.92), rgba(9,12,18,.96));
+  box-shadow: 0 40px 100px rgba(0,0,0,.5), 0 0 0 1px rgba(58,214,255,.06), 0 0 70px rgba(58,214,255,.07); }
+.mv-head { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; justify-content: space-between; margin: 2px 4px 14px; }
+.mv-title { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.mv-title strong { font-size: 20px; font-weight: 850; }
+.mv-title span { color: var(--muted); font-size: 14px; }
+.mv-sides { display: inline-flex; gap: 6px; }
+.side { display: inline-block; padding: 1px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 800; letter-spacing: .04em; }
+.side.T { background: rgba(255,170,60,.16); color: #ffc47a; border: 1px solid rgba(255,170,60,.4); }
+.side.CT { background: rgba(80,160,255,.16); color: #9cc8ff; border: 1px solid rgba(80,160,255,.4); }
+.mv-stage { position: relative; overflow: hidden; border-radius: 10px; background: #000; margin: 0 auto; cursor: pointer; }
+.mv-stage video { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; object-fit: fill; }
+.mv-stage[data-view="gen"] video, .mv-stage[data-view="real"] video { height: 200%; }
+.mv-stage[data-view="gen"] video { transform: translateY(-50%); }
+.mv-half { position: absolute; left: 0; right: 0; pointer-events: none; }
+.mv-stage[data-view="both"] .mv-half.real { top: 0; height: 50%; }
+.mv-stage[data-view="both"] .mv-half.gen { top: 50%; height: 50%; }
+.mv-stage[data-view="gen"] .mv-half.real, .mv-stage[data-view="real"] .mv-half.gen { display: none; }
+.mv-stage[data-view="gen"] .mv-half.gen, .mv-stage[data-view="real"] .mv-half.real { top: 0; height: 100%; }
+.mv-stage[data-view="both"] .mv-half.gen { border-top: 2px solid rgba(255,154,60,.85); box-shadow: 0 -1px 16px rgba(255,154,60,.45); }
+.mv-tile { position: absolute; outline: 1px solid rgba(0,0,0,.65); }
+.mv-tile .lab { position: absolute; left: 6px; top: 6px; display: inline-flex; gap: 5px; align-items: center; padding: 2px 7px 2px 5px; border-radius: 6px;
+  background: rgba(0,0,0,.6); font-size: 11.5px; font-weight: 700; backdrop-filter: blur(3px); }
+.mv-tile .lab i { width: 7px; height: 7px; border-radius: 50%; }
+.mv-tile .lab i.T { background: #ffb347; box-shadow: 0 0 8px #ffb347; } .mv-tile .lab i.CT { background: #6fb2ff; box-shadow: 0 0 8px #6fb2ff; }
+.mv-row { position: absolute; right: 8px; top: 8px; padding: 3px 10px; border-radius: 7px; font-size: 12px; font-weight: 800; letter-spacing: .03em; z-index: 1; }
+.mv-half.real .mv-row { background: rgba(0,0,0,.7); }
+.mv-half.gen .mv-row { background: rgba(255,154,60,.94); color: #140b02; }
+.mv-play { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; transition: opacity .25s; pointer-events: none; }
+.mv-play svg { width: 64px; height: 64px; padding: 16px; border-radius: 50%; background: rgba(0,0,0,.55); fill: #fff; backdrop-filter: blur(4px); }
+.mv-stage.paused .mv-play { opacity: 1; }
+.mv-bar { position: relative; height: 18px; margin: 10px 2px 0; cursor: pointer; touch-action: none; }
+.mv-bar::before { content: ""; position: absolute; left: 0; right: 0; top: 8px; height: 3px; border-radius: 3px; background: rgba(255,255,255,.12); }
+.mv-bar i { position: absolute; left: 0; top: 8px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, var(--cyan), var(--orange)); box-shadow: 0 0 10px rgba(255,154,60,.5); }
+.mv-bar .ticks { position: absolute; left: 0; right: 0; top: 13px; display: flex; justify-content: space-between; color: var(--muted); font-size: 10.5px; pointer-events: none; }
+.mv-picker { display: flex; flex-wrap: wrap; gap: 10px 20px; justify-content: space-between; align-items: center; margin: 26px 0 14px; }
+.mv-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.mv-card { position: relative; padding: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel-solid); color: var(--fg);
+  font: inherit; text-align: left; cursor: pointer; transition: transform .25s, border-color .25s, box-shadow .25s; }
+.mv-card:hover { transform: translateY(-3px); border-color: rgba(58,214,255,.5); }
+.mv-card[aria-pressed="true"] { border-color: var(--orange); box-shadow: 0 0 0 1px var(--orange), 0 0 28px rgba(255,154,60,.25); }
+.mv-card .thumb { aspect-ratio: 16 / 7; background: #000 center / cover no-repeat; }
+.mv-card .meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; font-size: 13px; }
+.mv-card .meta b { font-weight: 750; }
+.mv-card .meta span { color: var(--muted); font-size: 12px; }
+.mv-card .count { position: absolute; top: 8px; left: 8px; padding: 1px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 800; background: rgba(0,0,0,.65); backdrop-filter: blur(3px); }
+.mv-note { color: var(--muted); font-size: 13.5px; margin: 14px 2px 0; }
+@media (max-width: 600px) {
+  .mv-viewer { padding: 10px; }
+  #mv-mode button { padding: 6px 10px; font-size: 12px; white-space: nowrap; }
+  .mv-tile .lab { left: 3px; top: 3px; padding: 1px 5px 1px 4px; font-size: 9.5px; }
+  .mv-row { right: 4px; top: 4px; padding: 2px 6px; font-size: 10px; }
+  .mv-cards { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---------- dataset ---------- */
+#dataset { padding-top: 0; }
+.dataset-hero { position: relative; overflow: hidden; padding: 120px 0 70px; isolation: isolate; }
+.dataset-hero video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; opacity: .55; }
+.dataset-hero::before { content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, var(--bg) 0%, rgba(7,9,13,.72) 25%, rgba(7,9,13,.78) 75%, var(--bg) 100%); }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 30px; }
+.stat { padding: 20px; border-radius: var(--radius); background: rgba(10,13,19,.66); border: 1px solid var(--line-strong); backdrop-filter: blur(8px); }
+.stat .num { font-size: clamp(28px, 4vw, 42px); font-weight: 900; line-height: 1; background: linear-gradient(90deg, var(--fg), var(--orange-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.stat .lbl { color: var(--muted); font-size: 13px; margin-top: 8px; }
+.games { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 10px; }
+.game { overflow: hidden; border-radius: var(--radius); background: var(--panel); border: 1px solid var(--line); transition: transform .3s, box-shadow .3s, border-color .3s; }
+.game:hover { transform: translateY(-5px); }
+.game[data-accent="sc2"]:hover { border-color: rgba(58,214,255,.6); box-shadow: 0 0 40px rgba(58,214,255,.15); }
+.game[data-accent="dota"]:hover { border-color: rgba(255,90,70,.6); box-shadow: 0 0 40px rgba(255,90,70,.15); }
+.game[data-accent="cs2"]:hover { border-color: rgba(255,154,60,.6); box-shadow: 0 0 40px rgba(255,154,60,.15); }
+.game img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; transition: transform .6s; }
+.game:hover img { transform: scale(1.05); }
+.game .body { padding: 18px 20px 20px; }
+.game-media { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #000; }
+.game-media video { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s; }
+.game:hover .game-media video { transform: scale(1.05); }
+.live { position: absolute; left: 10px; top: 10px; display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 7px;
+  background: rgba(0,0,0,.6); backdrop-filter: blur(4px); font-size: 11.5px; font-weight: 700; letter-spacing: .03em; }
+.live i { width: 7px; height: 7px; border-radius: 50%; background: #ff4d4d; box-shadow: 0 0 10px #ff4d4d; animation: pulse 1.6s infinite; }
+.sync { margin-top: 44px; padding: 16px; border-radius: 18px; border: 1px solid var(--line-strong);
+  background: linear-gradient(180deg, rgba(16,21,30,.9), rgba(9,12,18,.95)); box-shadow: 0 40px 100px rgba(0,0,0,.45); }
+.sync-head { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between; margin: 4px 4px 14px; }
+.sync-head h3 { margin: 0 0 4px; font-size: 22px; }
+.sync-head p { margin: 0; color: var(--muted); font-size: 14.5px; }
+.sync-stage { position: relative; border-radius: 10px; overflow: hidden; background: #000; }
+.sync-stage video { width: 100%; display: block; }
+.sync-tile { position: absolute; outline: 1px solid rgba(0,0,0,.7); pointer-events: none; }
+.sync-tile span { position: absolute; left: 6px; bottom: 6px; padding: 2px 7px; border-radius: 6px; background: rgba(0,0,0,.65); font-size: 11.5px; font-weight: 700; }
+.sync-cap { color: var(--muted); font-size: 13.5px; margin: 12px 4px 2px; }
+@media (max-width: 600px) {
+  #sync-tabs { flex-wrap: wrap; border-radius: 14px; }
+  #sync-tabs button { font-size: 12px; padding: 6px 10px; }
+  .sync { padding: 10px; }
+  .sync-tile span { font-size: 9px; left: 3px; bottom: 3px; padding: 1px 4px; }
+}
+.game .genre { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.game dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 12px 0 0; font-size: 14px; }
+.game dt { color: var(--muted); }
+.game dd { margin: 0; text-align: right; font-weight: 600; }
+figure.wide { margin: 40px 0 0; }
+figure.wide img { width: 100%; display: block; border-radius: var(--radius); border: 1px solid var(--line); }
+figure.wide figcaption { color: var(--muted); font-size: 14px; margin-top: 10px; }
+.trailer { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line-strong); box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+.trailer video { width: 100%; display: block; background: #000; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.note { padding: 20px 22px; border-radius: var(--radius); background: var(--panel); border: 1px solid var(--line); }
+.note ul { margin: 0; padding-left: 18px; color: #c6cdd8; font-size: 15px; }
+.note li { margin: 0 0 8px; }
+pre {
+  position: relative; background: #0b0f15; border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 18px 20px;
+  overflow-x: auto; font-size: 13px; line-height: 1.55; color: #d7dde8;
+}
+.copy { position: absolute; top: 10px; right: 10px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.05); color: var(--fg); border-radius: 8px; padding: 4px 10px; font-size: 12px; cursor: pointer; }
+footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align: center; border-top: 1px solid var(--line); margin-top: 80px; }
+
+@media (max-width: 900px) {
+  nav.top .links { display: none; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .games, .two { grid-template-columns: 1fr; }
+  .flow { grid-template-columns: 1fr; }
+  .arrow { transform: rotate(90deg); justify-self: center; animation: none; }
+}
+@media (max-width: 600px) {
+  section { padding-top: 70px; }
+  .tag { top: 6px; padding: 2px 6px; font-size: 10px; }
+  .tag.left { left: 6px; } .tag.right { left: calc(50% + 6px); }
+  .slider-handle::after { width: 34px; height: 34px; font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+<nav class="top" id="nav">
+  <a class="brand" href="#top">CS2 <span>World Model</span></a>
+  <div class="links">
+    <a href="#compare">真假对比</a><a href="#overview">核心能力</a><a href="#results">七图实测</a>
+    <a href="#multiview">多视角</a><a href="#dataset">数据集</a><a href="#citation">引用</a>
+  </div>
+  <a class="lang" href="index.html" hreflang="en" lang="en">EN</a>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-bg"><video src="static/videos/hero_wall.mp4" poster="static/images/hero_wall.jpg" autoplay muted loop playsinline></video></div>
+  <div>
+    <span class="eyebrow"><i></i>背景画面，全部由模型生成</span>
+    <h1>CS2 <em>World</em><br>Model</h1>
+    <p class="subtitle"><span style="display:inline-block">一份对局数据，</span><span style="display:inline-block">还原选手眼中的整个战场。</span><br><span style="display:inline-block">七张职业地图</span><span style="display:inline-block">&nbsp;· 720p</span><span style="display:inline-block">&nbsp;· 32 帧</span></p>
+    <p class="authors"><span>Weiyu Ma</span><span>Zeyuan Gong<sup>1</sup></span><span>Xinyu Cui<sup>2</sup></span><span>Jian Zhao<sup>3</sup></span></p>
+    <p class="affils"><span><sup>1</sup>阿卜杜拉国王科技大学（KAUST）</span><span><sup>2</sup>中国科学院自动化研究所</span><span><sup>3</sup>北京中关村学院</span></p>
+    <div class="btns">
+      <a class="btn" href="#results"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>观看演示</a>
+      <a class="btn ghost" href="#dataset">数据集</a>
+      <a class="btn ghost" href="https://arxiv.org/abs/2610.16166">数据集论文</a>
+    </div>
+  </div>
+  <div class="scroll-cue">向下滑动</div>
+</header>
+
+<main>
+  <section id="compare" class="wrap">
+    <p class="kicker reveal">以假乱真</p>
+    <h2 class="reveal">哪一边是真的？</h2>
+    <p class="lead reveal">左边是职业比赛录像，右边由模型生成。只需开局几帧和对局数据，即可续写 8 秒 720p 高清画面。拖动滑块，自己来分辨。</p>
+    <div class="reveal">
+      <div class="slider-shell" id="slider">
+        <video id="slider-video" src="static/videos/052_de_overpass_ak47.mp4" muted loop playsinline preload="auto"></video>
+        <canvas id="slider-canvas" width="1280" height="720"></canvas>
+        <div class="slider-handle" id="slider-handle"></div>
+        <span class="slider-label l">录像</span><span class="slider-label r">生成</span>
+      </div>
+      <div class="slider-caption"><span>de_overpass &middot; 摸进 A 点</span><span>训练中从未出现过的回合</span></div>
+    </div>
+  </section>
+
+  <section id="overview" class="wrap">
+    <p class="kicker reveal">核心能力</p>
+    <h2 class="reveal">懂地图，懂对局，懂视角</h2>
+    <p class="lead reveal">
+      选手站在哪、看向哪，场上十人在做什么，正在打哪张图——模型全都了然于胸，并据此画出选手此刻所见。穿廊过道、上楼下坑、转身回看，场景始终严丝合缝。
+    </p>
+    <div class="grid4">
+      <div class="card reveal"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 12l9 4 9-4"/><path d="M3 17l9 4 9-4"/></svg></div>
+        <h3>吃透地图</h3><p>七张职业地图烂熟于心。墙体、门洞、掩体分毫不差，视角怎么转都不穿帮。</p></div>
+      <div class="card reveal"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 20c0-2.2 1-4 3-4.6"/></svg></div>
+        <h3>掌控全局</h3><p>十名选手尽在掌握。谁在哪、在做什么，每一个画面都与真实对局一一对应。</p></div>
+      <div class="card reveal"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <h3>七图全覆盖</h3><p>Ancient、Anubis、Dust&nbsp;II、Inferno、Mirage、Nuke、Overpass，一张不落。</p></div>
+      <div class="card reveal"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg></div>
+        <h3>大模型底座</h3><p>基于 Cosmos3-Nano 微调，搭配 Wan2.2 VAE，8 秒画面一气呵成。</p></div>
+    </div>
+    <div class="flow reveal" aria-label="模型概览">
+      <div class="col">
+        <div class="chip"><b></b>地图</div>
+        <div class="chip"><b></b>对局数据</div>
+      </div>
+      <div class="arrow">&#10140;</div>
+      <div class="core"><strong>视频世界模型</strong><span>Cosmos3-Nano 底座</span></div>
+      <div class="arrow">&#10140;</div>
+      <div class="out"><strong>第一视角画面</strong><span>1280&times;720 &middot; 32 fps &middot; 8 s</span></div>
+    </div>
+  </section>
+
+  <section id="results" class="wrap gallery-wrap">
+    <p class="kicker reveal">效果展示</p>
+    <h2 class="reveal">七张地图，逐一实测</h2>
+    <p class="lead reveal">左为职业比赛录像，右为模型生成，1280&times;720 原画呈现。所有片段均来自训练中从未出现的回合。切换单画面或全屏，细节一览无余。</p>
+    <div class="toolbar reveal">
+      <div class="filters" role="group" aria-label="按地图筛选" id="map-filter"></div>
+      <div class="views" role="group" aria-label="显示方式" id="view-mode">
+        <button type="button" data-view="both" aria-pressed="true">左右对比</button>
+        <button type="button" data-view="gen" aria-pressed="false">只看生成</button>
+        <button type="button" data-view="real" aria-pressed="false">只看录像</button>
+      </div>
+    </div>
+    <div class="gallery" id="gallery" data-view="both"></div>
+  </section>
+
+  <section id="multiview" class="wrap mv-wrap">
+    <p class="kicker reveal">多视角</p>
+    <h2 class="reveal">多个视角，同一个战场</h2>
+    <p class="lead reveal">同一回合，每名选手的画面分别生成，却能彼此呼应：同一面墙、同一个对手，换个角度看过去，依然严丝合缝。</p>
+    <div class="mv-facts reveal" id="mv-facts"></div>
+    <div class="mv-viewer reveal">
+      <div class="mv-head">
+        <div class="mv-title"><strong id="mv-name"></strong><span id="mv-sub"></span><span class="mv-sides" id="mv-sides"></span></div>
+        <div class="views" role="group" aria-label="多视角显示方式" id="mv-mode">
+          <button type="button" data-view="both" aria-pressed="true">录像与生成</button>
+          <button type="button" data-view="gen" aria-pressed="false">只看生成</button>
+          <button type="button" data-view="real" aria-pressed="false">只看录像</button>
+        </div>
+      </div>
+      <div class="mv-stage" id="mv-stage" data-view="both">
+        <video id="mv-video" muted loop playsinline preload="none"></video>
+        <div class="mv-half real"><span class="mv-row">录像</span></div>
+        <div class="mv-half gen"><span class="mv-row">生成</span></div>
+        <div class="mv-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="mv-bar" id="mv-bar" aria-label="进度"><i id="mv-progress"></i><div class="ticks"><span>0 s</span><span>2 s</span><span>4 s</span><span>6 s</span><span>8 s</span></div></div>
+    </div>
+    <div class="mv-picker reveal">
+      <div class="filters" role="group" aria-label="按人数筛选" id="mv-filter"></div>
+      <span class="mv-note" style="margin:0">点击画面暂停 &middot; 长按画面查看录像</span>
+    </div>
+    <div class="mv-cards" id="mv-cards"></div>
+    <p class="mv-note">全部来自训练中从未出现的回合。每个视角 1280&times;720、32 帧、8 秒，页面按一半尺寸显示；T、CT 为选手阵营。</p>
+  </section>
+
+  <section id="dataset">
+    <div class="dataset-hero">
+      <video data-src="static/dataset/wall.mp4" muted loop playsinline preload="none" class="lazy-bg"></video>
+      <div class="wrap">
+        <p class="kicker reveal">开源数据集</p>
+        <h2 class="reveal">电竞世界模型数据集</h2>
+        <p class="lead reveal">
+          2,400 余场真实对局，近 2,900 小时选手第一视角视频，横跨星际争霸&nbsp;II、Dota&nbsp;2、CS2 三大电竞项目。每一帧画面都与选手操作、游戏状态和比赛事件精确对齐，为世界模型、多视角理解等研究提供真实素材。
+        </p>
+        <div class="stats">
+          <div class="stat reveal"><div class="num" data-count="2468">0</div><div class="lbl">场真实对局</div></div>
+          <div class="stat reveal"><div class="num" data-count="626">0</div><div class="lbl">小时对局时长</div></div>
+          <div class="stat reveal"><div class="num" data-count="2885" data-prefix="~">0</div><div class="lbl">小时选手视角视频</div></div>
+          <div class="stat reveal"><div class="num" data-count="3">0</div><div class="lbl">大电竞项目：RTS、MOBA、FPS</div></div>
+        </div>
+        <div class="btns reveal" style="justify-content:flex-start;margin-top:28px">
+          <a class="btn" href="https://www.modelscope.cn/datasets/meisah111/Esports_world_model_datasets">前往魔搭下载</a>
+          <a class="btn ghost" href="https://github.com/sc2musa/esports-worldmodel-datasets">使用文档</a>
+          <a class="btn ghost" href="https://arxiv.org/abs/2610.16166">arXiv 论文</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="games">
+        <article class="game reveal" data-accent="sc2">
+          <div class="game-media"><video class="lazy-bg" data-src="static/dataset/card_sc2.mp4" poster="static/dataset/starcraft2-preview.jpg" muted loop playsinline preload="none" aria-label="星际争霸 II 选手视角"></video><span class="live"><i></i>第一视角</span></div>
+          <div class="body"><div class="genre">RTS &middot; 1v1</div><h3>星际争霸 II</h3>
+            <dl><dt>对局数</dt><dd>2,145</dd><dt>对局时长</dt><dd>395.8 小时</dd><dt>视角时长</dt><dd>791.5 小时</dd>
+                <dt>视角</dt><dd>每场双方 2 个</dd><dt>结构化数据</dt><dd>约 5900 万轨迹步</dd></dl></div>
+        </article>
+        <article class="game reveal" data-accent="dota">
+          <div class="game-media"><video class="lazy-bg" data-src="static/dataset/card_dota2.mp4" poster="static/dataset/dota2-preview.jpg" muted loop playsinline preload="none" aria-label="Dota 2 选手视角"></video><span class="live"><i></i>第一视角</span></div>
+          <div class="body"><div class="genre">MOBA &middot; 5v5</div><h3>Dota 2</h3>
+            <dl><dt>对局数</dt><dd>273</dd><dt>对局时长</dt><dd>195.5 小时</dd><dt>视角时长</dt><dd>1,955.0 小时</dd>
+                <dt>视角</dt><dd>每场最多 10 个</dd><dt>结构化数据</dt><dd>约 77 亿次状态变化、2.2 亿个事件</dd></dl></div>
+        </article>
+        <article class="game reveal" data-accent="cs2">
+          <div class="game-media"><video class="lazy-bg" data-src="static/dataset/card_cs2.mp4" poster="static/dataset/counter-strike2-preview.jpg" muted loop playsinline preload="none" aria-label="CS2 选手视角"></video><span class="live"><i></i>第一视角</span></div>
+          <div class="body"><div class="genre">FPS &middot; 5v5</div><h3>CS2</h3>
+            <dl><dt>对局数</dt><dd>50</dd><dt>对局时长</dt><dd>34.8 小时</dd><dt>视角时长</dt><dd>138.4 小时</dd>
+                <dt>视角</dt><dd>7,623 段回合视角</dd><dt>结构化数据</dt><dd>状态 64 tick/秒，视频 16 帧</dd></dl></div>
+        </article>
+      </div>
+
+      <div class="sync reveal">
+        <div class="sync-head">
+          <div><h3>同一瞬间，全员视角</h3>
+            <p>真实录像逐人解码、逐帧对齐，同一时刻的每个视角尽收眼底。</p></div>
+          <div class="views" role="group" aria-label="游戏" id="sync-tabs">
+            <button type="button" data-game="sc2" aria-pressed="true">星际争霸&nbsp;II &middot; 双方视角</button>
+            <button type="button" data-game="dota2" aria-pressed="false">Dota&nbsp;2 &middot; 十人视角</button>
+            <button type="button" data-game="cs2" aria-pressed="false">CS2 &middot; 十人视角</button>
+          </div>
+        </div>
+        <div class="sync-stage" id="sync-stage"><video id="sync-video" muted loop playsinline preload="none"></video><div id="sync-tiles"></div></div>
+        <p class="sync-cap" id="sync-cap"></p>
+      </div>
+
+      <div style="margin-top:56px">
+        <h3 class="reveal">宣传片</h3>
+        <div class="trailer reveal"><video src="static/dataset/trailer.mp4" poster="static/dataset/trailer.jpg" controls muted playsinline preload="none"></video></div>
+      </div>
+
+      <div style="margin-top:56px">
+        <div class="note reveal"><h3>使用与许可</h3><ul>
+          <li>仅限非商业研究使用；我们解码的数据、元数据和脚本以 CC BY-NC 4.0 协议发布。</li>
+          <li>游戏画面和素材归暴雪娱乐与 Valve 公司所有。</li>
+          <li>同一场比赛的所有视角请放在同一个数据划分中；做部分可观测任务时，不要把选手本不该知道的引擎状态放进输入。</li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="citation" class="wrap">
+    <p class="kicker reveal">引用</p>
+    <h2 class="reveal">引用数据集</h2>
+    <pre class="reveal"><button class="copy" type="button" id="copy-bib">复制</button><code id="bib">@article{ma2026esports,
+  title   = {Esports World Model Dataset},
+  author  = {Ma, Weiyu and Gong, Zeyuan and Liu, Xuhui and Zhang, Wenxuan and
+             Ding, Jian and Cui, Xinyu and Zhao, Jian and Elhoseiny, Mohamed},
+  journal = {arXiv preprint arXiv:2610.16166},
+  year    = {2026}
+}</code></pre>
+  </section>
+</main>
+
+<footer class="wrap">
+  Counter-Strike&nbsp;2 和 Dota&nbsp;2 是 Valve 公司的商标，StarCraft&nbsp;II 是暴雪娱乐的商标。本项目与上述公司无关，也未获其认可。<br>联系方式： <a href="mailto:sc2meisah@gmail.com">sc2meisah@gmail.com</a>
+</footer>
+
+<script>
+const CLIPS = {
+  "Ancient":  [["008_de_ancient_usp_silencer", "USP-S"], ["021_de_ancient_ak47", "AK-47"]],
+  "Anubis":   [["002_de_anubis_m4a1_silencer", "M4A1-S"], ["016_de_anubis_famas", "FAMAS"]],
+  "Dust II":  [["060_de_dust2_ak47", "AK-47"], ["069_de_dust2_deagle", "Desert Eagle"]],
+  "Inferno":  [["044_de_inferno_glock", "Glock-18"], ["018_de_inferno_ak47", "AK-47"]],
+  "Mirage":   [["005_de_mirage_knife_butterfly", "Butterfly Knife"], ["027_de_mirage_mp5sd", "MP5-SD"]],
+  "Nuke":     [["006_de_nuke_ak47", "AK-47"], ["013_de_nuke_galilar", "Galil AR"]],
+  "Overpass": [["007_de_overpass_ak47", "AK-47"], ["052_de_overpass_ak47", "AK-47"]],
+};
+
+// nav background after scrolling past the top
+const nav = document.getElementById("nav");
+const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 40);
+window.addEventListener("scroll", onScroll, { passive: true });
+onScroll();
+
+// reveal on scroll
+const revealer = new IntersectionObserver(entries => {
+  for (const entry of entries) {
+    if (entry.isIntersecting) { entry.target.classList.add("in"); revealer.unobserve(entry.target); }
+  }
+}, { threshold: 0.12 });
+document.querySelectorAll(".reveal").forEach(el => revealer.observe(el));
+
+// lazy load and play/pause for videos with data-src
+const player = new IntersectionObserver(entries => {
+  for (const entry of entries) {
+    const video = entry.target;
+    if (entry.isIntersecting) {
+      if (!video.getAttribute("src")) video.src = video.dataset.src;
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+    }
+  }
+}, { rootMargin: "200px 0px" });
+document.querySelectorAll("video.lazy-bg").forEach(v => player.observe(v));
+
+// gallery
+const gallery = document.getElementById("gallery");
+const filter = document.getElementById("map-filter");
+function clipCard(map, [name, weapon]) {
+  const figure = document.createElement("figure");
+  figure.className = "clip reveal";
+  figure.dataset.map = map;
+  figure.innerHTML = `
+    <div class="clip-frame">
+      <video muted loop playsinline preload="none" poster="static/images/${name}.jpg" data-src="static/videos/${name}.mp4"></video>
+      <span class="tag left">录像</span><span class="tag right">生成</span>
+      <button class="fs" type="button" aria-label="全屏"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    </div>
+    <figcaption><b>${map}</b><span>${weapon}</span></figcaption>`;
+  const video = figure.querySelector("video");
+  figure.querySelector(".fs").addEventListener("click", () => {
+    if (!video.getAttribute("src")) video.src = video.dataset.src;
+    (video.requestFullscreen || video.webkitEnterFullscreen || (() => {})).call(video);
+    video.play().catch(() => {});
+  });
+  player.observe(video);
+  revealer.observe(figure);
+  return figure;
+}
+document.querySelectorAll("#view-mode button").forEach(button => button.addEventListener("click", () => {
+  document.querySelectorAll("#view-mode button").forEach(b => b.setAttribute("aria-pressed", String(b === button)));
+  gallery.dataset.view = button.dataset.view;
+}));
+function show(map) {
+  for (const button of filter.querySelectorAll("button")) button.setAttribute("aria-pressed", String(button.dataset.map === map));
+  for (const figure of gallery.children) figure.hidden = map !== "All" && figure.dataset.map !== map;
+}
+for (const map of ["All", ...Object.keys(CLIPS)]) {
+  const button = document.createElement("button");
+  button.type = "button"; button.dataset.map = map; button.textContent = map === "All" ? "全部" : map;
+  button.addEventListener("click", () => show(map));
+  filter.appendChild(button);
+}
+for (const [map, clips] of Object.entries(CLIPS)) for (const clip of clips) gallery.appendChild(clipCard(map, clip));
+show("All");
+
+// multi-view viewer: one file per round, real views stacked above generated views
+const MULTIVIEW = [{"name":"overpass_k02_w01","map":"de_overpass","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]},{"name":"mirage_k02_w03","map":"de_mirage","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"CT"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"CT"}]},{"name":"dust2_k02_w02","map":"de_dust2","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]},{"name":"anubis_k05_w02","map":"de_anubis","views":5,"aspect":2.1333,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":0.6,"side":"CT"},{"x":0.5,"y":0.0,"w":0.5,"h":0.6,"side":"CT"},{"x":0.0,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.3333,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.6667,"y":0.6,"w":0.3333,"h":0.4,"side":"T"}]},{"name":"dust2_k05_w01","map":"de_dust2","views":5,"aspect":2.1333,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":0.6,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":0.6,"side":"T"},{"x":0.0,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.3333,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.6667,"y":0.6,"w":0.3333,"h":0.4,"side":"T"}]},{"name":"mirage_k10_w01","map":"de_mirage","views":10,"aspect":4.4444,"tiles":[{"x":0.0,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.2,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.4,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.6,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.8,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.0,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.2,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.4,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.6,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.8,"y":0.5,"w":0.2,"h":0.5,"side":"CT"}]},{"name":"ancient_k02_w01","map":"de_ancient","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]},{"name":"overpass_k03_w01","map":"de_overpass","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"anubis_k03_w02","map":"de_anubis","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"inferno_k03_w01","map":"de_inferno","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"CT"}]},{"name":"nuke_k03_w01","map":"de_nuke","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"CT"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"mirage_k03_w01","map":"de_mirage","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"inferno_k02_w03","map":"de_inferno","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]}];
+const MAP_NAMES = { de_ancient: "Ancient", de_anubis: "Anubis", de_dust2: "Dust II", de_inferno: "Inferno",
+                    de_mirage: "Mirage", de_nuke: "Nuke", de_overpass: "Overpass" };
+(() => {
+  const stage = document.getElementById("mv-stage");
+  const video = document.getElementById("mv-video");
+  const halves = { real: stage.querySelector(".mv-half.real"), gen: stage.querySelector(".mv-half.gen") };
+  const cards = document.getElementById("mv-cards");
+  const filter = document.getElementById("mv-filter");
+  const progress = document.getElementById("mv-progress");
+  const bar = document.getElementById("mv-bar");
+  let current = null, visible = false;
+
+  const sideCounts = w => ["T", "CT"].map(s => [s, w.tiles.filter(t => t.side === s).length]).filter(([, n]) => n);
+  document.getElementById("mv-facts").innerHTML =
+    `<span><b>${MULTIVIEW.length}</b>个回合</span>` +
+    `<span><b>${MULTIVIEW.reduce((n, w) => n + w.views, 0)}</b>个选手视角</span>` +
+    `<span><b>${new Set(MULTIVIEW.map(w => w.map)).size}</b>张地图</span>` +
+    `<span><b>2&ndash;10</b>人同屏生成</span>`;
+
+  const fit = () => {
+    if (!current) return;
+    const both = stage.dataset.view === "both";
+    const ratio = current.aspect / (both ? 2 : 1);
+    const maxH = window.innerHeight * 0.78;
+    const width = Math.min(stage.parentElement.clientWidth - 28, maxH * ratio);
+    stage.style.width = `${width}px`;
+    stage.style.height = `${width / ratio}px`;
+  };
+  const tiles = w => w.tiles.map((t, i) =>
+    `<div class="mv-tile" style="left:${t.x * 100}%;top:${t.y * 100}%;width:${t.w * 100}%;height:${t.h * 100}%">` +
+    `<span class="lab"><i class="${t.side}"></i>P${i + 1} &middot; ${t.side}</span></div>`).join("");
+
+  function select(w, autoplay) {
+    current = w;
+    for (const card of cards.children) card.setAttribute("aria-pressed", String(card.dataset.name === w.name));
+    document.getElementById("mv-name").textContent = MAP_NAMES[w.map] || w.map;
+    document.getElementById("mv-sub").textContent = `${w.views} 名选手 · 同一时刻`;
+    document.getElementById("mv-sides").innerHTML = sideCounts(w).map(([s, n]) => `<span class="side ${s}">${n} ${s}</span>`).join("");
+    for (const half of Object.values(halves)) {
+      half.querySelectorAll(".mv-tile").forEach(t => t.remove());
+      half.insertAdjacentHTML("beforeend", tiles(w));
+    }
+    video.poster = `static/multiview/${w.name}.jpg`;
+    video.src = `static/multiview/${w.name}.mp4`;
+    progress.style.width = "0";
+    fit();
+    if (autoplay || visible) video.play().catch(() => {});
+  }
+
+  function card(w) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "mv-card"; b.dataset.name = w.name; b.dataset.views = w.views;
+    b.innerHTML = `<div class="thumb" style="background-image:url(static/multiview/${w.name}.jpg)"></div>` +
+      `<span class="count">${w.views} 人</span>` +
+      `<div class="meta"><b>${MAP_NAMES[w.map] || w.map}</b><span>${sideCounts(w).map(([s, n]) => `${n} ${s}`).join(" &middot; ")}</span></div>`;
+    b.addEventListener("click", () => { select(w, true); stage.scrollIntoView({ behavior: "smooth", block: "center" }); });
+    return b;
+  }
+  MULTIVIEW.forEach(w => cards.appendChild(card(w)));
+
+  const sizes = [...new Set(MULTIVIEW.map(w => w.views))].sort((a, b) => a - b);
+  for (const size of ["All", ...sizes]) {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = size === "All" ? "全部" : `${size} 人`;
+    b.setAttribute("aria-pressed", String(size === "All"));
+    b.addEventListener("click", () => {
+      filter.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+      for (const c of cards.children) c.hidden = size !== "All" && Number(c.dataset.views) !== size;
+    });
+    filter.appendChild(b);
+  }
+
+  document.querySelectorAll("#mv-mode button").forEach(button => button.addEventListener("click", () => {
+    document.querySelectorAll("#mv-mode button").forEach(b => b.setAttribute("aria-pressed", String(b === button)));
+    stage.dataset.view = button.dataset.view;
+    fit();
+  }));
+
+  // click toggles play; press and hold flashes the real views
+  let holdTimer = null, held = false, before = null;
+  stage.addEventListener("pointerdown", () => {
+    held = false;
+    holdTimer = setTimeout(() => { held = true; before = stage.dataset.view; stage.dataset.view = "real"; fit(); }, 280);
+  });
+  const release = () => {
+    clearTimeout(holdTimer);
+    if (held) { stage.dataset.view = before; fit(); }
+  };
+  stage.addEventListener("pointerup", () => {
+    release();
+    if (!held) video.paused ? video.play().catch(() => {}) : video.pause();
+  });
+  stage.addEventListener("pointerleave", release);
+  video.addEventListener("play", () => stage.classList.remove("paused"));
+  video.addEventListener("pause", () => stage.classList.add("paused"));
+  video.addEventListener("timeupdate", () => {
+    if (video.duration) progress.style.width = `${(video.currentTime / video.duration) * 100}%`;
+  });
+  const seek = e => {
+    const rect = bar.getBoundingClientRect();
+    if (video.duration) video.currentTime = Math.min(0.999, Math.max(0, (e.clientX - rect.left) / rect.width)) * video.duration;
+  };
+  bar.addEventListener("pointerdown", e => { bar.setPointerCapture(e.pointerId); seek(e); });
+  bar.addEventListener("pointermove", e => { if (e.buttons) seek(e); });
+
+  new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    if (visible) video.play().catch(() => {}); else video.pause();
+  }, { threshold: 0.25 }).observe(stage);
+  window.addEventListener("resize", fit);
+  if (MULTIVIEW.length) select(MULTIVIEW[0], false);
+})();
+
+// real-vs-generated wipe slider: one side-by-side video drawn into a canvas
+(() => {
+  const shell = document.getElementById("slider");
+  const video = document.getElementById("slider-video");
+  const canvas = document.getElementById("slider-canvas");
+  const handle = document.getElementById("slider-handle");
+  const ctx = canvas.getContext("2d");
+  let split = 0.5, running = false, dragging = false;
+  const place = () => { handle.style.left = `${split * 100}%`; };
+  const draw = () => {
+    if (video.readyState >= 2) {
+      const half = video.videoWidth / 2, h = video.videoHeight, cut = split * canvas.width;
+      ctx.drawImage(video, 0, 0, half * split, h, 0, 0, cut, canvas.height);
+      ctx.drawImage(video, half + half * split, 0, half * (1 - split), h, cut, 0, canvas.width - cut, canvas.height);
+    }
+    if (running) requestAnimationFrame(draw);
+  };
+  const move = clientX => {
+    const rect = shell.getBoundingClientRect();
+    split = Math.min(0.98, Math.max(0.02, (clientX - rect.left) / rect.width));
+    place();
+    if (!running) draw();
+  };
+  shell.addEventListener("pointerdown", e => { dragging = true; shell.setPointerCapture(e.pointerId); move(e.clientX); });
+  shell.addEventListener("pointermove", e => { if (dragging || e.pointerType === "mouse") move(e.clientX); });
+  shell.addEventListener("pointerup", () => { dragging = false; });
+  new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) { video.play().catch(() => {}); if (!running) { running = true; draw(); } }
+    else { video.pause(); running = false; }
+  }, { threshold: 0.2 }).observe(shell);
+  video.addEventListener("loadeddata", draw);
+  place();
+})();
+
+// animated counters
+const counter = new IntersectionObserver(entries => {
+  for (const entry of entries) {
+    if (!entry.isIntersecting) continue;
+    const el = entry.target, target = Number(el.dataset.count), prefix = el.dataset.prefix || "";
+    const start = performance.now(), duration = 1600;
+    const tick = now => {
+      const t = Math.min(1, (now - start) / duration), eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = prefix + Math.round(target * eased).toLocaleString("en-US");
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    counter.unobserve(el);
+  }
+}, { threshold: 0.6 });
+document.querySelectorAll("[data-count]").forEach(el => counter.observe(el));
+
+// dataset: synchronized player views, one grid video per game
+(() => {
+  const SYNC = {
+    sc2: { cols: 2, rows: 1, labels: ["选手 1 · 虫族", "选手 2 · 神族"],
+           cap: "Pylon 地图锦标赛，虫族对决神族：20 秒内 728 个单位阵亡，双方视角同步呈现。" },
+    dota2: { cols: 5, rows: 2, labels: Array.from({ length: 10 }, (_, i) => `英雄 ${i + 1}`),
+             cap: "一场团战，十位英雄视角同步回放：20 秒内 6 次击杀。" },
+    cs2: { cols: 5, rows: 2, labels: Array.from({ length: 10 }, (_, i) => `选手 ${i + 1}`),
+           cap: "Nuke 职业比赛的一个回合，十个第一人称视角全员到齐：20 秒内 8 次击杀。" },
+  };
+  const stage = document.getElementById("sync-stage");
+  const video = document.getElementById("sync-video");
+  const tiles = document.getElementById("sync-tiles");
+  let visible = false;
+  function show(game) {
+    const g = SYNC[game];
+    document.querySelectorAll("#sync-tabs button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.game === game)));
+    tiles.innerHTML = g.labels.map((label, i) =>
+      `<div class="sync-tile" style="left:${(i % g.cols) / g.cols * 100}%;top:${Math.floor(i / g.cols) / g.rows * 100}%;` +
+      `width:${100 / g.cols}%;height:${100 / g.rows}%"><span>${label}</span></div>`).join("");
+    video.poster = `static/dataset/sync_${game}.jpg`;
+    video.src = `static/dataset/sync_${game}.mp4`;
+    document.getElementById("sync-cap").textContent = g.cap;
+    if (visible) video.play().catch(() => {});
+  }
+  document.querySelectorAll("#sync-tabs button").forEach(b => b.addEventListener("click", () => show(b.dataset.game)));
+  new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    if (visible) video.play().catch(() => {}); else video.pause();
+  }, { threshold: 0.25 }).observe(stage);
+  show("sc2");
+})();
+
+// copy BibTeX
+document.getElementById("copy-bib").addEventListener("click", async event => {
+  try { await navigator.clipboard.writeText(document.getElementById("bib").textContent); event.target.textContent = "已复制"; }
+  catch { event.target.textContent = "请手动选择复制"; }
+  setTimeout(() => { event.target.textContent = "复制"; }, 1600);
+});
+</script>
+</body>
+</html>
