@@ -69,8 +69,8 @@ R = [
     ('<h3>Esports World Model Dataset</h3>', '<h3>电竞世界模型数据集</h3>', 1),
     ("<p>Real matches in StarCraft&nbsp;II, Dota&nbsp;2 and CS2, every player's view aligned with actions, state and events.</p>",
      "<p>星际争霸&nbsp;II、Dota&nbsp;2、CS2 的真实对局，每名选手的画面都与操作、状态和事件对齐。</p>", 1),
-    ('<li><b>2,400+</b>matches</li><li><b>~2,900&nbsp;h</b>player views</li><li><b>3</b>games</li>',
-     '<li><b>2,400+</b>场对局</li><li><b>~2,900</b>小时选手视角</li><li><b>3</b>款游戏</li>', 1),
+    ('<li><b>2,673</b>matches</li><li><b>~3,828&nbsp;h</b>player views</li><li><b>3</b>games</li>',
+     '<li><b>2,673</b>场对局</li><li><b>~3,828</b>小时选手视角</li><li><b>3</b>款游戏</li>', 1),
     ('<span class="go">Explore the dataset &rarr;</span>', '<span class="go">浏览数据集 &rarr;</span>', 1),
     ('<p class="part reveal">Part 1 &middot; CS2 World Model</p>', '<p class="part reveal">第一部分 &middot; CS2 世界模型</p>', 1),
     ('<p class="part reveal">Part 2 &middot; Esports World Model Dataset</p>', '<p class="part reveal">第二部分 &middot; 电竞世界模型数据集</p>', 1),
@@ -146,9 +146,8 @@ R = [
     ("""          Replays of real players decoded into multi-player videos for StarCraft&nbsp;II, Dota&nbsp;2 and
           Counter-Strike&nbsp;2, time-aligned with game actions, engine state and events. Built for action-conditioned
           world models, multi-player consistency, partial observability and video understanding.""",
-     """          2,400 余场真实对局，近 2,900 小时选手第一视角视频，横跨星际争霸&nbsp;II、Dota&nbsp;2、CS2 三大电竞项目。每一帧画面都与选手操作、游戏状态和比赛事件精确对齐，为世界模型、多人视角理解等研究提供真实素材。""", 1),
+     """          2,673 场真实对局，约 3,828 小时选手第一视角视频，横跨星际争霸&nbsp;II、Dota&nbsp;2、CS2 三大电竞项目。每一帧画面都与选手操作、游戏状态和比赛事件精确对齐，为世界模型、多人视角理解等研究提供真实素材。""", 1),
     ('<div class="lbl">matches</div>', '<div class="lbl">场真实对局</div>', 1),
-    ('<div class="lbl">gameplay hours</div>', '<div class="lbl">小时对局时长</div>', 1),
     ('<div class="lbl">player-view hours</div>', '<div class="lbl">小时选手视角视频</div>', 1),
     ('<div class="lbl">games: RTS, MOBA, FPS</div>', '<div class="lbl">大电竞项目：RTS、MOBA、FPS</div>', 1),
     ('<div class="lbl">downloads on ModelScope</div>', '<div class="lbl">次魔搭下载</div>', 1),
