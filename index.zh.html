@@ -216,7 +216,7 @@ p { margin: 0 0 14px; }
 .clip figcaption { display: flex; justify-content: space-between; color: var(--muted); font-size: 14px; margin-top: 8px; }
 .clip figcaption b { color: var(--fg); font-weight: 600; }
 
-/* ---------- multi-view ---------- */
+/* ---------- multi-player ---------- */
 .mv-wrap { max-width: 1640px; }
 .mv-facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: -8px 0 28px; color: var(--muted); font-size: 14px; }
 .mv-facts b { color: var(--fg); font-size: 20px; font-weight: 850; margin-right: 6px; }
@@ -282,7 +282,7 @@ p { margin: 0 0 14px; }
 .dataset-hero video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; opacity: .55; }
 .dataset-hero::before { content: ""; position: absolute; inset: 0; z-index: -1;
   background: linear-gradient(180deg, var(--bg) 0%, rgba(7,9,13,.72) 25%, rgba(7,9,13,.78) 75%, var(--bg) 100%); }
-.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 30px; }
+.stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-top: 30px; }
 .stat { padding: 20px; border-radius: var(--radius); background: rgba(10,13,19,.66); border: 1px solid var(--line-strong); backdrop-filter: blur(8px); }
 .stat .num { font-size: clamp(28px, 4vw, 42px); font-weight: 900; line-height: 1; background: linear-gradient(90deg, var(--fg), var(--orange-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .stat .lbl { color: var(--muted); font-size: 13px; margin-top: 8px; }
@@ -317,6 +317,23 @@ p { margin: 0 0 14px; }
   .sync { padding: 10px; }
   .sync-tile span { font-size: 9px; left: 3px; bottom: 3px; padding: 1px 4px; }
 }
+.game-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.logo-chip { flex: none; display: flex; align-items: center; justify-content: center; height: 44px; width: 116px; padding: 6px 10px; border-radius: 9px; background: #141925; }
+.logo-chip img, .collect-logo img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+[data-bg="black"] { background: #000; }
+[data-bg="orange"] { background: #de9b35; }
+.collect { margin-top: 56px; }
+.collect-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 24px; }
+.collect-head p { color: var(--muted); margin: 6px 0 0; max-width: 640px; }
+.collect-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 7px; border: 1px solid var(--line-strong); font-size: 12px; font-weight: 700; letter-spacing: .03em; white-space: nowrap; }
+.collect-tag i { width: 7px; height: 7px; border-radius: 50%; background: #3ddc84; box-shadow: 0 0 10px #3ddc84; animation: pulse 1.6s infinite; }
+.collect-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; margin-top: 20px; }
+.collect-item { overflow: hidden; border-radius: var(--radius); background: var(--panel); border: 1px solid var(--line); transition: transform .3s, border-color .3s; }
+.collect-item:hover { transform: translateY(-4px); border-color: var(--line-strong); }
+.collect-logo { display: flex; align-items: center; justify-content: center; height: 112px; padding: 16px 22px; background: #141925; }
+.collect-item .meta { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 10px 14px 12px; }
+.collect-item .meta b { font-size: 14px; }
+.collect-item .meta span { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
 .game .genre { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .game dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 12px 0 0; font-size: 14px; }
 .game dt { color: var(--muted); }
@@ -340,7 +357,9 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
 @media (max-width: 900px) {
   nav.top .links { display: none; }
   .stats { grid-template-columns: repeat(2, 1fr); }
+  .stats .stat:last-child { grid-column: span 2; }
   .games, .two { grid-template-columns: 1fr; }
+  .collect-grid { grid-template-columns: repeat(2, 1fr); }
   .flow { grid-template-columns: 1fr; }
   .arrow { transform: rotate(90deg); justify-self: center; animation: none; }
 }
@@ -361,7 +380,7 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
   <a class="brand" href="#top">CS2 <span>World Model</span></a>
   <div class="links">
     <a href="#compare">真假对比</a><a href="#overview">核心能力</a><a href="#results">七图实测</a>
-    <a href="#multiview">多视角</a><a href="#dataset">数据集</a><a href="#citation">引用</a>
+    <a href="#multiplayer">多人</a><a href="#dataset">数据集</a><a href="#citation">引用</a>
   </div>
   <a class="lang" href="index.html" hreflang="en" lang="en">EN</a>
 </nav>
@@ -442,15 +461,15 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
     <div class="gallery" id="gallery" data-view="both"></div>
   </section>
 
-  <section id="multiview" class="wrap mv-wrap">
-    <p class="kicker reveal">多视角</p>
+  <section id="multiplayer" class="wrap mv-wrap">
+    <p class="kicker reveal">多人</p>
     <h2 class="reveal">多个视角，同一个战场</h2>
     <p class="lead reveal">同一回合，每名选手的画面分别生成，却能彼此呼应：同一面墙、同一个对手，换个角度看过去，依然严丝合缝。</p>
     <div class="mv-facts reveal" id="mv-facts"></div>
     <div class="mv-viewer reveal">
       <div class="mv-head">
         <div class="mv-title"><strong id="mv-name"></strong><span id="mv-sub"></span><span class="mv-sides" id="mv-sides"></span></div>
-        <div class="views" role="group" aria-label="多视角显示方式" id="mv-mode">
+        <div class="views" role="group" aria-label="多人显示方式" id="mv-mode">
           <button type="button" data-view="both" aria-pressed="true">录像与生成</button>
           <button type="button" data-view="gen" aria-pressed="false">只看生成</button>
           <button type="button" data-view="real" aria-pressed="false">只看录像</button>
@@ -479,13 +498,14 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
         <p class="kicker reveal">开源数据集</p>
         <h2 class="reveal">电竞世界模型数据集</h2>
         <p class="lead reveal">
-          2,400 余场真实对局，近 2,900 小时选手第一视角视频，横跨星际争霸&nbsp;II、Dota&nbsp;2、CS2 三大电竞项目。每一帧画面都与选手操作、游戏状态和比赛事件精确对齐，为世界模型、多视角理解等研究提供真实素材。
+          2,400 余场真实对局，近 2,900 小时选手第一视角视频，横跨星际争霸&nbsp;II、Dota&nbsp;2、CS2 三大电竞项目。每一帧画面都与选手操作、游戏状态和比赛事件精确对齐，为世界模型、多人视角理解等研究提供真实素材。
         </p>
         <div class="stats">
           <div class="stat reveal"><div class="num" data-count="2468">0</div><div class="lbl">场真实对局</div></div>
           <div class="stat reveal"><div class="num" data-count="626">0</div><div class="lbl">小时对局时长</div></div>
           <div class="stat reveal"><div class="num" data-count="2885" data-prefix="~">0</div><div class="lbl">小时选手视角视频</div></div>
           <div class="stat reveal"><div class="num" data-count="3">0</div><div class="lbl">大电竞项目：RTS、MOBA、FPS</div></div>
+          <div class="stat reveal"><div class="num" id="ms-downloads" data-count="1390124" data-compact>0</div><div class="lbl">次魔搭下载</div></div>
         </div>
         <div class="btns reveal" style="justify-content:flex-start;margin-top:28px">
           <a class="btn" href="https://www.modelscope.cn/datasets/meisah111/Esports_world_model_datasets">前往魔搭下载</a>
@@ -499,22 +519,37 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
       <div class="games">
         <article class="game reveal" data-accent="sc2">
           <div class="game-media"><video class="lazy-bg" data-src="static/dataset/card_sc2.mp4" poster="static/dataset/starcraft2-preview.jpg" muted loop playsinline preload="none" aria-label="星际争霸 II 选手视角"></video><span class="live"><i></i>第一视角</span></div>
-          <div class="body"><div class="genre">RTS &middot; 1v1</div><h3>星际争霸 II</h3>
+          <div class="body"><div class="game-head"><div><div class="genre">RTS &middot; 1v1</div><h3>星际争霸 II</h3></div><span class="logo-chip" data-bg="black"><img src="static/logos/sc2.png" alt="StarCraft II logo" loading="lazy"></span></div>
             <dl><dt>对局数</dt><dd>2,145</dd><dt>对局时长</dt><dd>395.8 小时</dd><dt>视角时长</dt><dd>791.5 小时</dd>
                 <dt>视角</dt><dd>每场双方 2 个</dd><dt>结构化数据</dt><dd>约 5900 万轨迹步</dd></dl></div>
         </article>
         <article class="game reveal" data-accent="dota">
           <div class="game-media"><video class="lazy-bg" data-src="static/dataset/card_dota2.mp4" poster="static/dataset/dota2-preview.jpg" muted loop playsinline preload="none" aria-label="Dota 2 选手视角"></video><span class="live"><i></i>第一视角</span></div>
-          <div class="body"><div class="genre">MOBA &middot; 5v5</div><h3>Dota 2</h3>
+          <div class="body"><div class="game-head"><div><div class="genre">MOBA &middot; 5v5</div><h3>Dota 2</h3></div><span class="logo-chip"><img src="static/logos/dota2.png" alt="Dota 2 logo" loading="lazy"></span></div>
             <dl><dt>对局数</dt><dd>273</dd><dt>对局时长</dt><dd>195.5 小时</dd><dt>视角时长</dt><dd>1,955.0 小时</dd>
                 <dt>视角</dt><dd>每场最多 10 个</dd><dt>结构化数据</dt><dd>约 77 亿次状态变化、2.2 亿个事件</dd></dl></div>
         </article>
         <article class="game reveal" data-accent="cs2">
           <div class="game-media"><video class="lazy-bg" data-src="static/dataset/card_cs2.mp4" poster="static/dataset/counter-strike2-preview.jpg" muted loop playsinline preload="none" aria-label="CS2 选手视角"></video><span class="live"><i></i>第一视角</span></div>
-          <div class="body"><div class="genre">FPS &middot; 5v5</div><h3>CS2</h3>
+          <div class="body"><div class="game-head"><div><div class="genre">FPS &middot; 5v5</div><h3>CS2</h3></div><span class="logo-chip" data-bg="orange"><img src="static/logos/cs2.png" alt="Counter-Strike 2 logo" loading="lazy"></span></div>
             <dl><dt>对局数</dt><dd>50</dd><dt>对局时长</dt><dd>34.8 小时</dd><dt>视角时长</dt><dd>138.4 小时</dd>
                 <dt>视角</dt><dd>7,623 段回合视角</dd><dt>结构化数据</dt><dd>状态 64 tick/秒，视频 16 帧</dd></dl></div>
         </article>
+      </div>
+
+      <div class="collect">
+        <div class="collect-head reveal">
+          <div><h3>即将加入：20 余款热门游戏</h3>
+            <p>更多热门游戏正在加紧采集，暂未包含在当前发布的数据集中。</p></div>
+          <span class="collect-tag"><i></i>采集中</span>
+        </div>
+        <div class="collect-grid">
+          <article class="collect-item reveal"><div class="collect-logo"><img src="static/logos/valorant.svg" alt="Valorant logo" loading="lazy"></div><div class="meta"><b>无畏契约</b><span>FPS &middot; 5v5</span></div></article>
+          <article class="collect-item reveal"><div class="collect-logo"><img src="static/logos/lol.svg" alt="League of Legends logo" loading="lazy"></div><div class="meta"><b>英雄联盟</b><span>MOBA &middot; 5v5</span></div></article>
+          <article class="collect-item reveal"><div class="collect-logo"><img src="static/logos/deltaforce.png" alt="Delta Force logo" loading="lazy"></div><div class="meta"><b>三角洲行动</b><span>FPS</span></div></article>
+          <article class="collect-item reveal"><div class="collect-logo"><img src="static/logos/aoe2.png" alt="Age of Empires II logo" loading="lazy"></div><div class="meta"><b>帝国时代 II</b><span>RTS</span></div></article>
+          <article class="collect-item reveal"><div class="collect-logo"><img src="static/logos/aoe4.png" alt="Age of Empires IV logo" loading="lazy"></div><div class="meta"><b>帝国时代 IV</b><span>RTS</span></div></article>
+        </div>
       </div>
 
       <div class="sync reveal">
@@ -560,7 +595,7 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
 </main>
 
 <footer class="wrap">
-  Counter-Strike&nbsp;2 和 Dota&nbsp;2 是 Valve 公司的商标，StarCraft&nbsp;II 是暴雪娱乐的商标。本项目与上述公司无关，也未获其认可。<br>联系方式： <a href="mailto:sc2meisah@gmail.com">sc2meisah@gmail.com</a>
+  Counter-Strike&nbsp;2 和 Dota&nbsp;2 是 Valve 公司的商标，StarCraft&nbsp;II 是暴雪娱乐的商标，其他游戏名称和标志归各自所有者所有。本项目与上述公司无关，也未获其认可。<br>联系方式： <a href="mailto:sc2meisah@gmail.com">sc2meisah@gmail.com</a>
 </footer>
 
 <script>
@@ -632,19 +667,19 @@ document.querySelectorAll("#view-mode button").forEach(button => button.addEvent
 }));
 function show(map) {
   for (const button of filter.querySelectorAll("button")) button.setAttribute("aria-pressed", String(button.dataset.map === map));
-  for (const figure of gallery.children) figure.hidden = map !== "All" && figure.dataset.map !== map;
+  for (const figure of gallery.children) figure.hidden = figure.dataset.map !== map;
 }
-for (const map of ["All", ...Object.keys(CLIPS)]) {
+for (const map of Object.keys(CLIPS)) {
   const button = document.createElement("button");
-  button.type = "button"; button.dataset.map = map; button.textContent = map === "All" ? "全部" : map;
+  button.type = "button"; button.dataset.map = map; button.textContent = map;
   button.addEventListener("click", () => show(map));
   filter.appendChild(button);
 }
 for (const [map, clips] of Object.entries(CLIPS)) for (const clip of clips) gallery.appendChild(clipCard(map, clip));
-show("All");
+show(Object.keys(CLIPS)[0]);
 
-// multi-view viewer: one file per round, real views stacked above generated views
-const MULTIVIEW = [{"name":"overpass_k02_w01","map":"de_overpass","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]},{"name":"mirage_k02_w03","map":"de_mirage","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"CT"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"CT"}]},{"name":"dust2_k02_w02","map":"de_dust2","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]},{"name":"anubis_k05_w02","map":"de_anubis","views":5,"aspect":2.1333,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":0.6,"side":"CT"},{"x":0.5,"y":0.0,"w":0.5,"h":0.6,"side":"CT"},{"x":0.0,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.3333,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.6667,"y":0.6,"w":0.3333,"h":0.4,"side":"T"}]},{"name":"dust2_k05_w01","map":"de_dust2","views":5,"aspect":2.1333,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":0.6,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":0.6,"side":"T"},{"x":0.0,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.3333,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.6667,"y":0.6,"w":0.3333,"h":0.4,"side":"T"}]},{"name":"mirage_k10_w01","map":"de_mirage","views":10,"aspect":4.4444,"tiles":[{"x":0.0,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.2,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.4,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.6,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.8,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.0,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.2,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.4,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.6,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.8,"y":0.5,"w":0.2,"h":0.5,"side":"CT"}]},{"name":"ancient_k02_w01","map":"de_ancient","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]},{"name":"overpass_k03_w01","map":"de_overpass","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"anubis_k03_w02","map":"de_anubis","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"inferno_k03_w01","map":"de_inferno","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"CT"}]},{"name":"nuke_k03_w01","map":"de_nuke","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"CT"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"mirage_k03_w01","map":"de_mirage","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"inferno_k02_w03","map":"de_inferno","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]}];
+// multi-player viewer: one file per round, real views stacked above generated views
+const MULTIPLAYER = [{"name":"overpass_k02_w01","map":"de_overpass","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]},{"name":"mirage_k02_w03","map":"de_mirage","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"CT"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"CT"}]},{"name":"dust2_k02_w02","map":"de_dust2","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]},{"name":"anubis_k05_w02","map":"de_anubis","views":5,"aspect":2.1333,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":0.6,"side":"CT"},{"x":0.5,"y":0.0,"w":0.5,"h":0.6,"side":"CT"},{"x":0.0,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.3333,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.6667,"y":0.6,"w":0.3333,"h":0.4,"side":"T"}]},{"name":"dust2_k05_w01","map":"de_dust2","views":5,"aspect":2.1333,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":0.6,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":0.6,"side":"T"},{"x":0.0,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.3333,"y":0.6,"w":0.3333,"h":0.4,"side":"T"},{"x":0.6667,"y":0.6,"w":0.3333,"h":0.4,"side":"T"}]},{"name":"mirage_k10_w01","map":"de_mirage","views":10,"aspect":4.4444,"tiles":[{"x":0.0,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.2,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.4,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.6,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.8,"y":0.0,"w":0.2,"h":0.5,"side":"T"},{"x":0.0,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.2,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.4,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.6,"y":0.5,"w":0.2,"h":0.5,"side":"CT"},{"x":0.8,"y":0.5,"w":0.2,"h":0.5,"side":"CT"}]},{"name":"ancient_k02_w01","map":"de_ancient","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]},{"name":"overpass_k03_w01","map":"de_overpass","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"anubis_k03_w02","map":"de_anubis","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"inferno_k03_w01","map":"de_inferno","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"CT"}]},{"name":"nuke_k03_w01","map":"de_nuke","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"CT"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"mirage_k03_w01","map":"de_mirage","views":3,"aspect":5.3333,"tiles":[{"x":0.0,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.3333,"y":0.0,"w":0.3333,"h":1.0,"side":"T"},{"x":0.6667,"y":0.0,"w":0.3333,"h":1.0,"side":"T"}]},{"name":"inferno_k02_w03","map":"de_inferno","views":2,"aspect":3.5556,"tiles":[{"x":0.0,"y":0.0,"w":0.5,"h":1.0,"side":"T"},{"x":0.5,"y":0.0,"w":0.5,"h":1.0,"side":"T"}]}];
 const MAP_NAMES = { de_ancient: "Ancient", de_anubis: "Anubis", de_dust2: "Dust II", de_inferno: "Inferno",
                     de_mirage: "Mirage", de_nuke: "Nuke", de_overpass: "Overpass" };
 (() => {
@@ -659,9 +694,9 @@ const MAP_NAMES = { de_ancient: "Ancient", de_anubis: "Anubis", de_dust2: "Dust 
 
   const sideCounts = w => ["T", "CT"].map(s => [s, w.tiles.filter(t => t.side === s).length]).filter(([, n]) => n);
   document.getElementById("mv-facts").innerHTML =
-    `<span><b>${MULTIVIEW.length}</b>个回合</span>` +
-    `<span><b>${MULTIVIEW.reduce((n, w) => n + w.views, 0)}</b>个选手视角</span>` +
-    `<span><b>${new Set(MULTIVIEW.map(w => w.map)).size}</b>张地图</span>` +
+    `<span><b>${MULTIPLAYER.length}</b>个回合</span>` +
+    `<span><b>${MULTIPLAYER.reduce((n, w) => n + w.views, 0)}</b>个选手视角</span>` +
+    `<span><b>${new Set(MULTIPLAYER.map(w => w.map)).size}</b>张地图</span>` +
     `<span><b>2&ndash;10</b>人同屏生成</span>`;
 
   const fit = () => {
@@ -687,8 +722,8 @@ const MAP_NAMES = { de_ancient: "Ancient", de_anubis: "Anubis", de_dust2: "Dust 
       half.querySelectorAll(".mv-tile").forEach(t => t.remove());
       half.insertAdjacentHTML("beforeend", tiles(w));
     }
-    video.poster = `static/multiview/${w.name}.jpg`;
-    video.src = `static/multiview/${w.name}.mp4`;
+    video.poster = `static/multiplayer/${w.name}.jpg`;
+    video.src = `static/multiplayer/${w.name}.mp4`;
     progress.style.width = "0";
     fit();
     if (autoplay || visible) video.play().catch(() => {});
@@ -697,23 +732,25 @@ const MAP_NAMES = { de_ancient: "Ancient", de_anubis: "Anubis", de_dust2: "Dust 
   function card(w) {
     const b = document.createElement("button");
     b.type = "button"; b.className = "mv-card"; b.dataset.name = w.name; b.dataset.views = w.views;
-    b.innerHTML = `<div class="thumb" style="background-image:url(static/multiview/${w.name}.jpg)"></div>` +
+    b.innerHTML = `<div class="thumb" style="background-image:url(static/multiplayer/${w.name}.jpg)"></div>` +
       `<span class="count">${w.views} 人</span>` +
       `<div class="meta"><b>${MAP_NAMES[w.map] || w.map}</b><span>${sideCounts(w).map(([s, n]) => `${n} ${s}`).join(" &middot; ")}</span></div>`;
     b.addEventListener("click", () => { select(w, true); stage.scrollIntoView({ behavior: "smooth", block: "center" }); });
     return b;
   }
-  MULTIVIEW.forEach(w => cards.appendChild(card(w)));
+  MULTIPLAYER.forEach(w => cards.appendChild(card(w)));
 
-  const sizes = [...new Set(MULTIVIEW.map(w => w.views))].sort((a, b) => a - b);
-  for (const size of ["All", ...sizes]) {
+  // largest round first; picking a size shows its rounds and loads the first one into the viewer
+  const sizes = [...new Set(MULTIPLAYER.map(w => w.views))].sort((a, b) => b - a);
+  function pick(size, autoplay) {
+    filter.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(Number(x.dataset.views) === size)));
+    for (const c of cards.children) c.hidden = Number(c.dataset.views) !== size;
+    select(MULTIPLAYER.find(w => w.views === size), autoplay);
+  }
+  for (const size of sizes) {
     const b = document.createElement("button");
-    b.type = "button"; b.textContent = size === "All" ? "全部" : `${size} 人`;
-    b.setAttribute("aria-pressed", String(size === "All"));
-    b.addEventListener("click", () => {
-      filter.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
-      for (const c of cards.children) c.hidden = size !== "All" && Number(c.dataset.views) !== size;
-    });
+    b.type = "button"; b.dataset.views = size; b.textContent = `${size} 人`;
+    b.addEventListener("click", () => pick(size, true));
     filter.appendChild(b);
   }
 
@@ -755,7 +792,7 @@ const MAP_NAMES = { de_ancient: "Ancient", de_anubis: "Anubis", de_dust2: "Dust 
     if (visible) video.play().catch(() => {}); else video.pause();
   }, { threshold: 0.25 }).observe(stage);
   window.addEventListener("resize", fit);
-  if (MULTIVIEW.length) select(MULTIVIEW[0], false);
+  if (sizes.length) pick(sizes[0], false);
 })();
 
 // real-vs-generated wipe slider: one side-by-side video drawn into a canvas
@@ -792,15 +829,18 @@ const MAP_NAMES = { de_ancient: "Ancient", de_anubis: "Anubis", de_dust2: "Dust 
   place();
 })();
 
-// animated counters
+// animated counters; data-compact numbers read as 1.39M (139万 on the Chinese page)
+const compact = new Intl.NumberFormat(document.documentElement.lang, { notation: "compact", maximumSignificantDigits: 3 });
+const formatCount = (el, n) => (el.dataset.prefix || "") + ("compact" in el.dataset ? compact.format(n) : n.toLocaleString("en-US"));
 const counter = new IntersectionObserver(entries => {
   for (const entry of entries) {
     if (!entry.isIntersecting) continue;
-    const el = entry.target, target = Number(el.dataset.count), prefix = el.dataset.prefix || "";
+    const el = entry.target;
+    el.dataset.started = "1";
     const start = performance.now(), duration = 1600;
     const tick = now => {
       const t = Math.min(1, (now - start) / duration), eased = 1 - Math.pow(1 - t, 3);
-      el.textContent = prefix + Math.round(target * eased).toLocaleString("en-US");
+      el.textContent = formatCount(el, Math.round(Number(el.dataset.count) * eased));
       if (t < 1) requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
@@ -808,6 +848,17 @@ const counter = new IntersectionObserver(entries => {
   }
 }, { threshold: 0.6 });
 document.querySelectorAll("[data-count]").forEach(el => counter.observe(el));
+
+// live ModelScope download count; the number in the markup is the fallback
+fetch("https://www.modelscope.cn/api/v1/datasets/meisah111/Esports_world_model_datasets")
+  .then(r => r.json())
+  .then(({ Data }) => {
+    const el = document.getElementById("ms-downloads"), n = Number(Data && Data.Downloads);
+    if (!(n > 0)) return;
+    el.dataset.count = n;
+    if (el.dataset.started) el.textContent = formatCount(el, n);
+  })
+  .catch(() => {});
 
 // dataset: synchronized player views, one grid video per game
 (() => {

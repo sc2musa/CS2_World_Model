@@ -26,8 +26,8 @@ R = [
      '<a class="lang" href="index.html" hreflang="en" lang="en">EN</a>', 1),
     ('<a href="#compare">Compare</a><a href="#overview">Method</a><a href="#results">Seven maps</a>',
      '<a href="#compare">真假对比</a><a href="#overview">核心能力</a><a href="#results">七图实测</a>', 1),
-    ('<a href="#multiview">Multi-view</a><a href="#dataset">Dataset</a><a href="#citation">Citation</a>',
-     '<a href="#multiview">多视角</a><a href="#dataset">数据集</a><a href="#citation">引用</a>', 1),
+    ('<a href="#multiplayer">Multi-player</a><a href="#dataset">Dataset</a><a href="#citation">Citation</a>',
+     '<a href="#multiplayer">多人</a><a href="#dataset">数据集</a><a href="#citation">引用</a>', 1),
     # hero
     ('<i></i>Every frame in the background is generated</span>', '<i></i>背景画面，全部由模型生成</span>', 1),
     ('A map-aware video world model that renders first-person Counter-Strike&nbsp;2 gameplay from game state, on seven competitive maps.',
@@ -82,12 +82,12 @@ R = [
      '<button type="button" data-view="gen" aria-pressed="false">只看生成</button>', 2),
     ('<button type="button" data-view="real" aria-pressed="false">Real only</button>',
      '<button type="button" data-view="real" aria-pressed="false">只看录像</button>', 2),
-    # multi-view
-    ('<p class="kicker reveal">Multi-view</p>', '<p class="kicker reveal">多视角</p>', 1),
+    # multi-player
+    ('<p class="kicker reveal">Multi-player</p>', '<p class="kicker reveal">多人</p>', 1),
     ('<h2 class="reveal">Several players, one moment</h2>', '<h2 class="reveal">多个视角，同一个战场</h2>', 1),
     ('All players in a round share one game state. Each view below is generated separately, yet they agree: the same wall, the same opponent, seen through different eyes.',
      '同一回合，每名选手的画面分别生成，却能彼此呼应：同一面墙、同一个对手，换个角度看过去，依然严丝合缝。', 1),
-    ('aria-label="Multi-view mode"', 'aria-label="多视角显示方式"', 1),
+    ('aria-label="Multi-player mode"', 'aria-label="多人显示方式"', 1),
     ('<button type="button" data-view="both" aria-pressed="true">Real &amp; generated</button>',
      '<button type="button" data-view="both" aria-pressed="true">录像与生成</button>', 1),
     ('<div class="mv-half real"><span class="mv-row">Real</span></div>', '<div class="mv-half real"><span class="mv-row">录像</span></div>', 1),
@@ -101,14 +101,15 @@ R = [
     # dataset
     ('<p class="kicker reveal">Dataset</p>', '<p class="kicker reveal">开源数据集</p>', 1),
     ('<h2 class="reveal">Esports World Model Dataset</h2>', '<h2 class="reveal">电竞世界模型数据集</h2>', 1),
-    ("""          Replays of real players decoded into multi-view player videos for StarCraft&nbsp;II, Dota&nbsp;2 and
+    ("""          Replays of real players decoded into multi-player videos for StarCraft&nbsp;II, Dota&nbsp;2 and
           Counter-Strike&nbsp;2, time-aligned with game actions, engine state and events. Built for action-conditioned
-          world models, multi-view consistency, partial observability and video understanding.""",
-     """          2,400 余场真实对局，近 2,900 小时选手第一视角视频，横跨星际争霸&nbsp;II、Dota&nbsp;2、CS2 三大电竞项目。每一帧画面都与选手操作、游戏状态和比赛事件精确对齐，为世界模型、多视角理解等研究提供真实素材。""", 1),
+          world models, multi-player consistency, partial observability and video understanding.""",
+     """          2,400 余场真实对局，近 2,900 小时选手第一视角视频，横跨星际争霸&nbsp;II、Dota&nbsp;2、CS2 三大电竞项目。每一帧画面都与选手操作、游戏状态和比赛事件精确对齐，为世界模型、多人视角理解等研究提供真实素材。""", 1),
     ('<div class="lbl">matches</div>', '<div class="lbl">场真实对局</div>', 1),
     ('<div class="lbl">gameplay hours</div>', '<div class="lbl">小时对局时长</div>', 1),
     ('<div class="lbl">player-view hours</div>', '<div class="lbl">小时选手视角视频</div>', 1),
     ('<div class="lbl">games: RTS, MOBA, FPS</div>', '<div class="lbl">大电竞项目：RTS、MOBA、FPS</div>', 1),
+    ('<div class="lbl">downloads on ModelScope</div>', '<div class="lbl">次魔搭下载</div>', 1),
     ('>Download on ModelScope</a>', '>前往魔搭下载</a>', 1),
     ('>Documentation</a>', '>使用文档</a>', 1),
     ('>arXiv paper</a>', '>arXiv 论文</a>', 1),
@@ -131,6 +132,16 @@ R = [
     ('<dd>~7.7B state changes, 220M events</dd>', '<dd>约 77 亿次状态变化、2.2 亿个事件</dd>', 1),
     ('<dd>7,623 round POV clips</dd>', '<dd>7,623 段回合视角</dd>', 1),
     ('<dd>64 tick/s state, 16 fps video</dd>', '<dd>状态 64 tick/秒，视频 16 帧</dd>', 1),
+    # games in collection
+    ('<h3>Coming next: 20+ popular games</h3>', '<h3>即将加入：20 余款热门游戏</h3>', 1),
+    ('<p>Data collection is under way for more titles. They are not part of the current release.</p>',
+     '<p>更多热门游戏正在加紧采集，暂未包含在当前发布的数据集中。</p>', 1),
+    ('<span class="collect-tag"><i></i>Collecting</span>', '<span class="collect-tag"><i></i>采集中</span>', 1),
+    ('<b>Valorant</b>', '<b>无畏契约</b>', 1),
+    ('<b>League of Legends</b>', '<b>英雄联盟</b>', 1),
+    ('<b>Delta Force</b>', '<b>三角洲行动</b>', 1),
+    ('<b>Age of Empires II</b>', '<b>帝国时代 II</b>', 1),
+    ('<b>Age of Empires IV</b>', '<b>帝国时代 IV</b>', 1),
     ('<h3>Every player, the same moment</h3>', '<h3>同一瞬间，全员视角</h3>', 1),
     ('<p>Real replays decoded per player and lined up on the replay clock. Pick a game:</p>',
      '<p>真实录像逐人解码、逐帧对齐，同一时刻的每个视角尽收眼底。</p>', 1),
@@ -151,19 +162,20 @@ R = [
     ('<h2 class="reveal">Cite the dataset</h2>', '<h2 class="reveal">引用数据集</h2>', 1),
     ('<button class="copy" type="button" id="copy-bib">Copy</button>', '<button class="copy" type="button" id="copy-bib">复制</button>', 1),
     ("""  Counter-Strike&nbsp;2 and Dota&nbsp;2 are trademarks of Valve Corporation; StarCraft&nbsp;II is a trademark of Blizzard Entertainment.
-  This project is not affiliated with or endorsed by either company.<br>Contact:""",
-     """  Counter-Strike&nbsp;2 和 Dota&nbsp;2 是 Valve 公司的商标，StarCraft&nbsp;II 是暴雪娱乐的商标。本项目与上述公司无关，也未获其认可。<br>联系方式：""", 1),
+  All other game names and logos are trademarks of their respective owners.
+  This project is not affiliated with or endorsed by any of these companies.<br>Contact:""",
+     """  Counter-Strike&nbsp;2 和 Dota&nbsp;2 是 Valve 公司的商标，StarCraft&nbsp;II 是暴雪娱乐的商标，其他游戏名称和标志归各自所有者所有。本项目与上述公司无关，也未获其认可。<br>联系方式：""", 1),
     # scripts
     ('aria-label="Full screen"', 'aria-label="全屏"', 1),
     ('<span class="tag left">Real</span><span class="tag right">Generated</span>',
      '<span class="tag left">录像</span><span class="tag right">生成</span>', 1),
-    ('`<span><b>${MULTIVIEW.length}</b>rounds</span>`', '`<span><b>${MULTIVIEW.length}</b>个回合</span>`', 1),
+    ('`<span><b>${MULTIPLAYER.length}</b>rounds</span>`', '`<span><b>${MULTIPLAYER.length}</b>个回合</span>`', 1),
     ('</b>player views</span>`', '</b>个选手视角</span>`', 1),
     ('</b>maps</span>`', '</b>张地图</span>`', 1),
     ('<b>2&ndash;10</b>players per round</span>', '<b>2&ndash;10</b>人同屏生成</span>', 1),
     ('`${w.views} players · same moment`', '`${w.views} 名选手 · 同一时刻`', 1),
     ('`<span class="count">${w.views} players</span>`', '`<span class="count">${w.views} 人</span>`', 1),
-    ('b.textContent = size === "All" ? "All" : `${size} players`;', 'b.textContent = size === "All" ? "全部" : `${size} 人`;', 1),
+    ('b.textContent = `${size} players`;', 'b.textContent = `${size} 人`;', 1),
     ('labels: ["Player 1 · Zerg", "Player 2 · Protoss"]', 'labels: ["选手 1 · 虫族", "选手 2 · 神族"]', 1),
     ("cap: \"A tournament match on Pylon, Zerg against Protoss: both players' screens during a battle in which 728 units die within 20 seconds.\"",
      'cap: "Pylon 地图锦标赛，虫族对决神族：20 秒内 728 个单位阵亡，双方视角同步呈现。"', 1),
@@ -190,10 +202,5 @@ if missing:
         print(f"count {got} != {n}: {en!r}")
     sys.exit(1)
 
-# the map filter's "All" button label (the data value stays "All")
-old = 'button.type = "button"; button.dataset.map = map; button.textContent = map;'
-assert s.count(old) == 1
-s = s.replace(old, 'button.type = "button"; button.dataset.map = map; button.textContent = map === "All" ? "全部" : map;')
-
 (site / "index.zh.html").write_text(s, encoding="utf-8")
-print("ok", len(R) + 1, "replacements")
+print("ok", len(R), "replacements")
