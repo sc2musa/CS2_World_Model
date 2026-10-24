@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CS2 World Model · 中文</title>
-<meta name="description" content="一份对局数据，还原选手眼中的整个战场。CS2 视频世界模型与电竞世界模型数据集。">
+<meta name="description" content="从电竞数据出发，构建多人交互的世界模型：CS2 世界模型与电竞世界模型数据集。">
 <meta name="color-scheme" content="dark">
 <style>
 :root {
@@ -354,6 +354,45 @@ pre {
 .copy { position: absolute; top: 10px; right: 10px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.05); color: var(--fg); border-radius: 8px; padding: 4px 10px; font-size: 12px; cursor: pointer; }
 footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align: center; border-top: 1px solid var(--line); margin-top: 80px; }
 
+/* ---------- firsts & overview ---------- */
+.firsts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 1180px; margin: 0 auto 16px; text-align: left; }
+.first { padding: 14px 16px; border-radius: 12px; background: rgba(10,13,19,.62); border: 1px solid rgba(255,154,60,.35);
+  backdrop-filter: blur(8px); box-shadow: 0 0 30px rgba(255,154,60,.08); }
+.first .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; letter-spacing: .14em;
+  text-transform: uppercase; color: #140b02; background: linear-gradient(90deg, var(--orange), var(--orange-2)); margin-bottom: 8px; }
+.first strong { display: block; font-size: 17px; line-height: 1.3; margin-bottom: 4px; }
+.first span:last-child { display: block; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.caps { color: var(--cyan); font-size: 14px; font-weight: 700; letter-spacing: .08em; margin: 0 0 26px; }
+.loop { list-style: none; padding: 0; margin: 0 0 22px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.loop li { position: relative; padding: 16px 18px; border-radius: 12px; background: var(--panel-solid); border: 1px solid var(--line); }
+.loop li:not(:last-child)::after { content: "\279C"; position: absolute; right: -11px; top: 50%; transform: translateY(-50%); color: var(--orange); font-size: 14px; z-index: 1; }
+.loop b { display: block; color: var(--orange); font-size: 12px; letter-spacing: .14em; }
+.loop strong { display: block; font-size: 17px; margin: 2px 0 4px; }
+.loop span { display: block; color: var(--muted); font-size: 14px; line-height: 1.5; }
+.loop-note { color: var(--orange-2); font-size: 14px; margin: 0 0 30px; }
+.pillars { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.pillar { display: block; padding: 26px; border-radius: 18px; color: var(--fg); border: 1px solid var(--line-strong);
+  background: radial-gradient(circle at 0% 0%, rgba(255,154,60,.16), rgba(18,23,32,.88) 60%); transition: transform .3s, border-color .3s, box-shadow .3s; }
+.pillar.data { background: radial-gradient(circle at 0% 0%, rgba(58,214,255,.14), rgba(18,23,32,.88) 60%); }
+.pillar:hover { color: var(--fg); transform: translateY(-4px); border-color: rgba(255,154,60,.5); box-shadow: 0 18px 50px rgba(0,0,0,.4); }
+.pillar .part-no { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--orange); font-weight: 700; }
+.pillar.data .part-no { color: var(--cyan); }
+.pillar h3 { font-size: 26px; margin: 6px 0 8px; }
+.pillar p { color: #c6cdd8; font-size: 15px; margin: 0 0 18px; }
+.pillar .facts { list-style: none; padding: 0; margin: 0 0 18px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.pillar .facts li { color: var(--muted); font-size: 13px; line-height: 1.35; }
+.pillar .facts b { display: block; color: var(--fg); font-size: 24px; font-weight: 900; line-height: 1.1; }
+.pillar .go { font-size: 14px; font-weight: 700; color: var(--orange-2); }
+.pillar.data .go { color: var(--cyan); }
+.part { display: inline-block; margin: 0 0 18px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line-strong);
+  font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--fg); background: rgba(255,255,255,.04); }
+@media (max-width: 900px) {
+  .firsts { grid-template-columns: 1fr 1fr; }
+  .pillars { grid-template-columns: 1fr; }
+  .loop { grid-template-columns: 1fr 1fr; }
+  .loop li::after { display: none; }
+}
+
 @media (max-width: 900px) {
   nav.top .links { display: none; }
   .stats { grid-template-columns: repeat(2, 1fr); }
@@ -365,6 +404,7 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
 }
 @media (max-width: 600px) {
   section { padding-top: 70px; }
+  .firsts { grid-template-columns: 1fr; }
   .tag { top: 6px; padding: 2px 6px; font-size: 10px; }
   .tag.left { left: 6px; } .tag.right { left: calc(50% + 6px); }
   .slider-handle::after { width: 34px; height: 34px; font-size: 16px; }
@@ -379,7 +419,7 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
 <nav class="top" id="nav">
   <a class="brand" href="#top">CS2 <span>World Model</span></a>
   <div class="links">
-    <a href="#compare">真假对比</a><a href="#overview">核心能力</a><a href="#results">七图实测</a>
+    <a href="#pipeline">总览</a><a href="#compare">真假对比</a><a href="#overview">核心能力</a><a href="#results">七图实测</a>
     <a href="#multiplayer">多人</a><a href="#dataset">数据集</a><a href="#citation">引用</a>
   </div>
   <a class="lang" href="index.html" hreflang="en" lang="en">EN</a>
@@ -390,7 +430,14 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
   <div>
     <span class="eyebrow"><i></i>背景画面，全部由模型生成</span>
     <h1>CS2 <em>World</em><br>Model</h1>
-    <p class="subtitle"><span style="display:inline-block">一份对局数据，</span><span style="display:inline-block">还原选手眼中的整个战场。</span><br><span style="display:inline-block">七张职业地图</span><span style="display:inline-block">&nbsp;· 720p</span><span style="display:inline-block">&nbsp;· 32 帧</span></p>
+    <p class="subtitle"><span style="display:inline-block">从电竞数据出发，</span><span style="display:inline-block">构建多人交互的世界模型。</span><br><span style="display:inline-block">一个模型，</span><span style="display:inline-block">生成整局 CS2 的每一名选手。</span></p>
+    <div class="firsts">
+      <div class="first"><span class="badge">全球首个</span><strong>完整 5v5 对局的世界模型</strong><span>双方十名选手同时生成，每个视角严丝合缝。</span></div>
+      <div class="first"><span class="badge">全球首个</span><strong>真实多人对抗的世界模型</strong><span>选手之间交火、击杀，地图始终保持一致。</span></div>
+      <div class="first"><span class="badge">全球首个</span><strong>720p &middot; 32 帧多人射击世界模型</strong><span>多人射击世界模型首次达到这一画质。</span></div>
+      <div class="first"><span class="badge">全球首个</span><strong>数据与模型闭环的电竞世界模型</strong><span>职业选手采集、清洗对齐、模型训练到评测补采，全流程自研。</span></div>
+    </div>
+    <p class="caps">一个模型 &middot; 七张地图 &middot; 双方阵营 &middot; 全部武器</p>
     <p class="authors"><span>Weiyu Ma</span><span>Zeyuan Gong<sup>1</sup></span><span>Xinyu Cui<sup>2</sup></span><span>Jian Zhao<sup>3</sup></span></p>
     <p class="affils"><span><sup>1</sup>阿卜杜拉国王科技大学（KAUST）</span><span><sup>2</sup>中国科学院自动化研究所</span><span><sup>3</sup>北京中关村学院</span></p>
     <div class="btns">
@@ -403,7 +450,37 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
 </header>
 
 <main>
+  <section id="pipeline" class="wrap">
+    <p class="kicker reveal">总览</p>
+    <h2 class="reveal">从数据到世界模型，完整闭环</h2>
+    <p class="lead reveal">每一环都由我们自己完成：职业选手录制真实对局，画面与操作、游戏状态逐帧清洗对齐，再用来训练同一个世界模型。</p>
+    <ol class="loop reveal">
+      <li><b>01</b><strong>职业选手采集</strong><span>真实对局，全员第一视角</span></li>
+      <li><b>02</b><strong>清洗与对齐</strong><span>画面、操作、游戏状态逐帧对齐</span></li>
+      <li><b>03</b><strong>世界模型训练</strong><span>一个模型覆盖七张地图</span></li>
+      <li><b>04</b><strong>生成评测</strong><span>与真实录像逐段对比，定位缺陷</span></li>
+    </ol>
+    <p class="loop-note reveal">模型缺什么数据，就定向采集什么：数据与模型共同迭代。</p>
+    <div class="pillars">
+      <a class="pillar reveal" href="#compare">
+        <span class="part-no">第一部分</span>
+        <h3>CS2 世界模型</h3>
+        <p>根据对局生成每名选手的第一视角画面，十人同处一个世界，交火、击杀一应俱全。</p>
+        <ul class="facts"><li><b>10</b>名选手同时生成</li><li><b>7</b>张地图，一个模型</li><li><b>720p</b>32 帧/秒</li></ul>
+        <span class="go">观看演示 &rarr;</span>
+      </a>
+      <a class="pillar data reveal" href="#dataset">
+        <span class="part-no">第二部分</span>
+        <h3>电竞世界模型数据集</h3>
+        <p>星际争霸&nbsp;II、Dota&nbsp;2、CS2 的真实对局，每名选手的画面都与操作、状态和事件对齐。</p>
+        <ul class="facts"><li><b>2,400+</b>场对局</li><li><b>~2,900</b>小时选手视角</li><li><b>3</b>款游戏</li></ul>
+        <span class="go">浏览数据集 &rarr;</span>
+      </a>
+    </div>
+  </section>
+
   <section id="compare" class="wrap">
+    <p class="part reveal">第一部分 &middot; CS2 世界模型</p>
     <p class="kicker reveal">以假乱真</p>
     <h2 class="reveal">哪一边是真的？</h2>
     <p class="lead reveal">左边是职业比赛录像，右边由模型生成。只需开局几帧和对局数据，即可续写 8 秒 720p 高清画面。拖动滑块，自己来分辨。</p>
@@ -495,6 +572,7 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
     <div class="dataset-hero">
       <video data-src="static/dataset/wall.mp4" muted loop playsinline preload="none" class="lazy-bg"></video>
       <div class="wrap">
+        <p class="part reveal">第二部分 &middot; 电竞世界模型数据集</p>
         <p class="kicker reveal">开源数据集</p>
         <h2 class="reveal">电竞世界模型数据集</h2>
         <p class="lead reveal">

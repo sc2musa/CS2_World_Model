@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CS2 World Model</title>
-<meta name="description" content="A map-aware video world model that renders first-person Counter-Strike 2 gameplay from game state, and the Esports World Model Dataset.">
+<meta name="description" content="From esports data to a multi-player interactive world model: the CS2 World Model and the Esports World Model Dataset.">
 <meta name="color-scheme" content="dark">
 <style>
 :root {
@@ -354,6 +354,45 @@ pre {
 .copy { position: absolute; top: 10px; right: 10px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.05); color: var(--fg); border-radius: 8px; padding: 4px 10px; font-size: 12px; cursor: pointer; }
 footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align: center; border-top: 1px solid var(--line); margin-top: 80px; }
 
+/* ---------- firsts & overview ---------- */
+.firsts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 1180px; margin: 0 auto 16px; text-align: left; }
+.first { padding: 14px 16px; border-radius: 12px; background: rgba(10,13,19,.62); border: 1px solid rgba(255,154,60,.35);
+  backdrop-filter: blur(8px); box-shadow: 0 0 30px rgba(255,154,60,.08); }
+.first .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; letter-spacing: .14em;
+  text-transform: uppercase; color: #140b02; background: linear-gradient(90deg, var(--orange), var(--orange-2)); margin-bottom: 8px; }
+.first strong { display: block; font-size: 17px; line-height: 1.3; margin-bottom: 4px; }
+.first span:last-child { display: block; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.caps { color: var(--cyan); font-size: 14px; font-weight: 700; letter-spacing: .08em; margin: 0 0 26px; }
+.loop { list-style: none; padding: 0; margin: 0 0 22px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.loop li { position: relative; padding: 16px 18px; border-radius: 12px; background: var(--panel-solid); border: 1px solid var(--line); }
+.loop li:not(:last-child)::after { content: "\279C"; position: absolute; right: -11px; top: 50%; transform: translateY(-50%); color: var(--orange); font-size: 14px; z-index: 1; }
+.loop b { display: block; color: var(--orange); font-size: 12px; letter-spacing: .14em; }
+.loop strong { display: block; font-size: 17px; margin: 2px 0 4px; }
+.loop span { display: block; color: var(--muted); font-size: 14px; line-height: 1.5; }
+.loop-note { color: var(--orange-2); font-size: 14px; margin: 0 0 30px; }
+.pillars { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.pillar { display: block; padding: 26px; border-radius: 18px; color: var(--fg); border: 1px solid var(--line-strong);
+  background: radial-gradient(circle at 0% 0%, rgba(255,154,60,.16), rgba(18,23,32,.88) 60%); transition: transform .3s, border-color .3s, box-shadow .3s; }
+.pillar.data { background: radial-gradient(circle at 0% 0%, rgba(58,214,255,.14), rgba(18,23,32,.88) 60%); }
+.pillar:hover { color: var(--fg); transform: translateY(-4px); border-color: rgba(255,154,60,.5); box-shadow: 0 18px 50px rgba(0,0,0,.4); }
+.pillar .part-no { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--orange); font-weight: 700; }
+.pillar.data .part-no { color: var(--cyan); }
+.pillar h3 { font-size: 26px; margin: 6px 0 8px; }
+.pillar p { color: #c6cdd8; font-size: 15px; margin: 0 0 18px; }
+.pillar .facts { list-style: none; padding: 0; margin: 0 0 18px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.pillar .facts li { color: var(--muted); font-size: 13px; line-height: 1.35; }
+.pillar .facts b { display: block; color: var(--fg); font-size: 24px; font-weight: 900; line-height: 1.1; }
+.pillar .go { font-size: 14px; font-weight: 700; color: var(--orange-2); }
+.pillar.data .go { color: var(--cyan); }
+.part { display: inline-block; margin: 0 0 18px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line-strong);
+  font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--fg); background: rgba(255,255,255,.04); }
+@media (max-width: 900px) {
+  .firsts { grid-template-columns: 1fr 1fr; }
+  .pillars { grid-template-columns: 1fr; }
+  .loop { grid-template-columns: 1fr 1fr; }
+  .loop li::after { display: none; }
+}
+
 @media (max-width: 900px) {
   nav.top .links { display: none; }
   .stats { grid-template-columns: repeat(2, 1fr); }
@@ -365,6 +404,7 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
 }
 @media (max-width: 600px) {
   section { padding-top: 70px; }
+  .firsts { grid-template-columns: 1fr; }
   .tag { top: 6px; padding: 2px 6px; font-size: 10px; }
   .tag.left { left: 6px; } .tag.right { left: calc(50% + 6px); }
   .slider-handle::after { width: 34px; height: 34px; font-size: 16px; }
@@ -379,7 +419,7 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
 <nav class="top" id="nav">
   <a class="brand" href="#top">CS2 <span>World Model</span></a>
   <div class="links">
-    <a href="#compare">Compare</a><a href="#overview">Method</a><a href="#results">Seven maps</a>
+    <a href="#pipeline">Overview</a><a href="#compare">Compare</a><a href="#overview">Method</a><a href="#results">Seven maps</a>
     <a href="#multiplayer">Multi-player</a><a href="#dataset">Dataset</a><a href="#citation">Citation</a>
   </div>
   <a class="lang" href="index.zh.html" hreflang="zh-CN" lang="zh-CN">中文</a>
@@ -390,7 +430,14 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
   <div>
     <span class="eyebrow"><i></i>Every frame in the background is generated</span>
     <h1>CS2 <em>World</em><br>Model</h1>
-    <p class="subtitle">A map-aware video world model that renders first-person Counter-Strike&nbsp;2 gameplay from game state, on seven competitive maps.</p>
+    <p class="subtitle">From esports data to a multi-player interactive world model: one model renders every player of a Counter-Strike&nbsp;2 round.</p>
+    <div class="firsts">
+      <div class="first"><span class="badge">World first</span><strong>Full 5v5 world model</strong><span>All ten players of both teams generated together, consistent across every view.</span></div>
+      <div class="first"><span class="badge">World first</span><strong>Multi-player combat world model</strong><span>Firefights and kills between players, on maps that stay consistent.</span></div>
+      <div class="first"><span class="badge">World first</span><strong>720p &middot; 32&nbsp;fps multi-player FPS world model</strong><span>Multi-player shooter world models reach 720p and 32&nbsp;fps for the first time.</span></div>
+      <div class="first"><span class="badge">World first</span><strong>Data&ndash;model closed-loop esports world model</strong><span>Pro-player collection, cleaning, alignment, training and evaluation, all built in-house.</span></div>
+    </div>
+    <p class="caps">One model &middot; 7 maps &middot; both sides &middot; every weapon</p>
     <p class="authors"><span>Weiyu Ma</span><span>Zeyuan Gong<sup>1</sup></span><span>Xinyu Cui<sup>2</sup></span><span>Jian Zhao<sup>3</sup></span></p>
     <p class="affils"><span><sup>1</sup>KAUST</span><span><sup>2</sup>Institute of Automation, Chinese Academy of Sciences</span><span><sup>3</sup>Beijing Zhongguancun Academy</span></p>
     <div class="btns">
@@ -403,7 +450,37 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
 </header>
 
 <main>
+  <section id="pipeline" class="wrap">
+    <p class="kicker reveal">Overview</p>
+    <h2 class="reveal">From data to world model, one closed loop</h2>
+    <p class="lead reveal">We built every stage ourselves: pro players record real matches, the recordings are cleaned and aligned frame by frame with actions and game state, and the aligned data trains one world model.</p>
+    <ol class="loop reveal">
+      <li><b>01</b><strong>Collect</strong><span>Pro players, every player's first-person view</span></li>
+      <li><b>02</b><strong>Clean &amp; align</strong><span>Video, actions and game state, frame by frame</span></li>
+      <li><b>03</b><strong>Train</strong><span>One world model for all seven maps</span></li>
+      <li><b>04</b><strong>Evaluate</strong><span>Compare with real recordings, find the gaps</span></li>
+    </ol>
+    <p class="loop-note reveal">Whatever the model is missing, we go and collect: data and model improve together.</p>
+    <div class="pillars">
+      <a class="pillar reveal" href="#compare">
+        <span class="part-no">Part 1</span>
+        <h3>CS2 World Model</h3>
+        <p>Generates each player's first-person view from the match, with all ten players in the same world.</p>
+        <ul class="facts"><li><b>10</b>players at once</li><li><b>7</b>maps, one model</li><li><b>720p</b>at 32 fps</li></ul>
+        <span class="go">Watch results &rarr;</span>
+      </a>
+      <a class="pillar data reveal" href="#dataset">
+        <span class="part-no">Part 2</span>
+        <h3>Esports World Model Dataset</h3>
+        <p>Real matches in StarCraft&nbsp;II, Dota&nbsp;2 and CS2, every player's view aligned with actions, state and events.</p>
+        <ul class="facts"><li><b>2,400+</b>matches</li><li><b>~2,900&nbsp;h</b>player views</li><li><b>3</b>games</li></ul>
+        <span class="go">Explore the dataset &rarr;</span>
+      </a>
+    </div>
+  </section>
+
   <section id="compare" class="wrap">
+    <p class="part reveal">Part 1 &middot; CS2 World Model</p>
     <p class="kicker reveal">Real vs. generated</p>
     <h2 class="reveal">Drag to compare</h2>
     <p class="lead reveal">Left of the handle is the original recording; right of it is our model. Starting from the opening frames and the match state, the model renders the next eight seconds at 720p and 32&nbsp;fps.</p>
@@ -497,6 +574,7 @@ footer { padding: 60px 0 70px; color: var(--muted); font-size: 13px; text-align:
     <div class="dataset-hero">
       <video data-src="static/dataset/wall.mp4" muted loop playsinline preload="none" class="lazy-bg"></video>
       <div class="wrap">
+        <p class="part reveal">Part 2 &middot; Esports World Model Dataset</p>
         <p class="kicker reveal">Dataset</p>
         <h2 class="reveal">Esports World Model Dataset</h2>
         <p class="lead reveal">
